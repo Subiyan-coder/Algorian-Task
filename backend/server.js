@@ -11,6 +11,7 @@ connectDB();
 const app = express();
 app.use(cors({
   origin: [
+    'https://algorian-task.vercel.app',
     'https://algorian-task-git-main-subiyan-coders-projects.vercel.app',
     'https://algorian-task-fbjpkpdnt-subiyan-coders-projects.vercel.app',
     'http://localhost:5173'
