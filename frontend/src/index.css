@@ -1,0 +1,361 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  background-color: #f0f2f5;
+  color: #222;
+  min-height: 100vh;
+}
+
+/* ─── Navbar ─────────────────────────────────────── */
+
+.navbar {
+  background-color: #1a1a2e;
+  padding: 14px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.navbar .logo {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: #fff;
+}
+
+.welcome {
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.welcome small {
+  color: #aaa;
+  margin-left: 4px;
+}
+
+/* ─── Buttons ─────────────────────────────────────── */
+
+button {
+  padding: 7px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.btn-secondary {
+  background-color: #9ca3af;
+  color: #fff;
+}
+
+.navbar button {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+/* ─── Page container ──────────────────────────────── */
+
+.page-container {
+  max-width: 960px;
+  margin: 32px auto;
+  padding: 0 20px;
+}
+
+.page-container h2 {
+  font-size: 1.4rem;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.page-container h3 {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 20px;
+  font-weight: 400;
+}
+
+/* ─── Auth forms (login / register) ──────────────── */
+
+.form-container {
+  max-width: 400px;
+  margin: 64px auto;
+  background: #fff;
+  padding: 32px;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.form-container h2 {
+  margin-bottom: 24px;
+  font-size: 1.4rem;
+  color: #1a1a2e;
+}
+
+.form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-container input,
+.form-container select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-container input:focus,
+.form-container select:focus {
+  border-color: #2563eb;
+}
+
+.form-container button {
+  background-color: #2563eb;
+  color: #fff;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.form-container p {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+}
+
+.form-container a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.form-container a:hover {
+  text-decoration: underline;
+}
+
+/* ─── Task creation form ──────────────────────────── */
+
+.task-form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+  align-items: flex-start;
+}
+
+.task-form input,
+.task-form select {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  flex: 1;
+  min-width: 160px;
+  outline: none;
+}
+
+.task-form input:focus,
+.task-form select:focus {
+  border-color: #2563eb;
+}
+
+.task-form button {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+/* ─── Task table ──────────────────────────────────── */
+
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+}
+
+.task-table th {
+  background-color: #1a1a2e;
+  color: #fff;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.task-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid #f0f2f5;
+  font-size: 0.9rem;
+  color: #333;
+  vertical-align: middle;
+}
+
+.task-table tr:last-child td {
+  border-bottom: none;
+}
+
+.task-table tr:hover {
+  background-color: #f8f9fb;
+}
+
+.task-table button {
+  margin-right: 6px;
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.task-table .btn-danger {
+  background-color: #ef4444;
+}
+
+/* ─── Status badges ───────────────────────────────── */
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge.in-progress {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.badge.completed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge.unable-to-complete {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* ─── Edit form (inside table row) ───────────────── */
+
+.edit-row td {
+  background-color: #f8faff;
+  padding: 14px;
+}
+
+.edit-row input,
+.edit-row select {
+  padding: 7px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  outline: none;
+}
+
+.edit-row input:focus,
+.edit-row select:focus {
+  border-color: #2563eb;
+}
+
+.edit-row button {
+  background-color: #2563eb;
+  color: #fff;
+  margin-right: 6px;
+}
+
+/* ─── Error message ───────────────────────────────── */
+
+.error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
+/* ─── Pagination ──────────────────────────────────── */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.pagination button {
+  background-color: #1a1a2e;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 5px;
+}
+
+.pagination button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.pagination span {
+  font-size: 0.9rem;
+  color: #555;
+}
