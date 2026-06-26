@@ -67,7 +67,7 @@ const getTask = async (req, res, next) => {
 
 const updateTask = async (req, res, next) => {
     try {
-        const task = await Task.findById(req.params.taskID);
+        const task = await Task.findById(req.params.taskId);
 
         if (!task) {
             return errorResponse(res, 403, 'You do not have permission to update this task');
@@ -100,7 +100,7 @@ const updateTask = async (req, res, next) => {
 
 const deleteTask = async (req, res, next) => {
     try {
-        const task = await Task.findById(req.params.taskID);
+        const task = await Task.findById(req.params.taskId);
 
         if (!task) {
             return errorResponse(res, 404, 'No task found with the provided ID');
