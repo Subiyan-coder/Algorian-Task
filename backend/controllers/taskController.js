@@ -1,17 +1,19 @@
 const Task = require('../models/Task');
 const User = require('../models/user');
+const { successResponse, errorResponse, checkRequiredFiels } = require('../utils/apiResponse')
 
-const createTask = async (req, res) => {
+const createTask = async (req, res, next) => {
     try {
         const {title, description, assignedTo} = req.body;
 
-        if (!title || !assignedTo) {
-            return res.status(400).json({ message: 'Title and assignedTo are required' });
+        const missingFields = checkRequiredFields({title, description, assignedto});
+        if (missingFields.length > 0) {
+            return errorResponse(res, 400, 'Please fill all required fields', missingFields);
         }
 
         const assignee = await User.findById(assignedTo);
         if (!assignee) {
-            return res.status(404).json({ message: 'Assigned user not found' });
+            return errorResponse(res, 400, `As a ${req.user.role}, you can only assign tasks to ${expectedRole}`);
         }
 
         const expectedRole = req.user.role === 'staff' ? 'admin' : 'staff';
@@ -27,13 +29,13 @@ const createTask = async (req, res) => {
             assignedTo,
             createdBy: req.user._id
         });
-        res.status(201).json(task);
+        return successResponse(res, 201, task, 'Task created successfully')
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next (err);
     }
 }
 
-const getTask = async (req, res) => {
+const getTask = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 4;
@@ -52,30 +54,30 @@ const getTask = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    res.json({
+    successResponse(res, 200,{
       tasks,
       page,
       totalPages: Math.ceil(total / limit) || 1,
       totalItems: total
-    });
+    }, ' Tasks Fetched Successfully');
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next (err)
   }
 };
 
-const updateTask = async (req, res) => {
+const updateTask = async (req, res, next) => {
     try {
         const task = await Task.findById(req.params.taskID);
 
         if (!task) {
-            return res.status(404).json({ message: 'Task not found' });
+            return errorResponse(res, 403, 'You do not have permission to update this task');
         }
 
         const isCreator = task.createdBy.toString() === req.user._id.toString();
         const isAssignee = task.assignedTo.toString() === req.user._id.toString();
 
         if (!isCreator && !isAssignee) {
-            return res.status(403).json({ message: 'Access denied' });
+            return res.status(403).json({ message: 'You do not have permission to update this task' });
         }
 
         if (isCreator) {
@@ -89,31 +91,31 @@ const updateTask = async (req, res) => {
         }
 
         const updated = await task.save();
-        res.json(updated);
+        successResponse (res, 200, updated, ' Task updated Successfully' );
 
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next (err);
     }
 }
 
-const deleteTask = async (req, res) => {
+const deleteTask = async (req, res, next) => {
     try {
         const task = await Task.findById(req.params.taskID);
 
         if (!task) {
-            return res.status(404).json({ message: 'Task not found' });
+            return errorResponse(res, 404, 'No task found with the provided ID');
         }
 
         const isCreator = task.createdBy.toString() === req.user._id.toString();
 
         if (!isCreator) {
-            return res.status(403).json({ message: 'Only the creator can delete this task' });
+            return errorResponse(res, 403, 'Only the creator of this task can delete it');
         }
 
         await task.deleteOne();
-        res.json({ message: 'Task deleted successfully' });
+        return successResponse(res, 200, null, 'Task deleted successfully');
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next (err);
     }
 };
 

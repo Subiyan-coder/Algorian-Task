@@ -1,7 +1,9 @@
+const { errorResponse } = require('../utils/apiResponse');
+
 const authorize = (...roles)=> {
     return (req, res, next) => {
-        if (!roles.user || !roles.includes(req.user.role)) {
-            return res.status(403).json({ message: 'Forbidden: You do not have permission to access this resource' });
+        if (!req.user || !roles.includes(req.user.role)) {
+            return errorResponse(res, 403, 'You do not have permission to access this resource');
         }
         next();
     };

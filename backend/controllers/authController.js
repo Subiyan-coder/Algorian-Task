@@ -1,13 +1,20 @@
 const User = require('../models/user');
 const generateToken = require('../utils/generateToken');
-
-const register = async (req, res) => {
+const { successResponse, errorResponse, checkRequiredFiels } = require('../utils/apiResponse')
+const register = async (req, res, next) => {
     try {
         const {name, email, contact, password, role} = req.body;
 
+         
+        const missingFields = checkRequiredFiels({name, email, contact, password});
+
+        if(missingFields.length > 0) {
+            return errorResponse(res, 400, 'Please fill all required fields',missingFeilds)
+        }
+
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
+            return errorResponse( res, 400, 'An account with this EMAIL already exists', ['email is taken'] )
         }
         
         const user = await User.create({
@@ -18,43 +25,43 @@ const register = async (req, res) => {
             role : role === 'admin' ? 'admin' : 'staff'
         });
 
-        res.status(201).json({
+        return successResponse( res, 201, {
             _id: user._id,
             name: user.name,
             email: user.email,
             contact: user.contact,
             role: user.role,
             token: generateToken(user._id, user.role)
-        });
+        }, ' User registered Successfully ');
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next(err);
     }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
         if (user && (await user.matchPassword(password))) {
-            res.json({
+            return successResponse( res, 200, {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
                 contact: user.contact,
                 role: user.role,
                 token: generateToken(user._id, user.role)
-            });
+            }, ' Login Successful ');
         } else {
-            res.status(401).json({ message: 'Invalid email or password' });
+            return errorResponse(res, 401, 'Invalid EMAIL or PASSWORD' );
         }
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next(err);
     }
 };
 
 const getProfile = async (req, res) => {
-    res.json(req.user);
+    return successResponse ( res, 200, req.user, ' Profile fetched Successfully ')
 };
 
 module.exports = { register, login, getProfile };
