@@ -35,9 +35,11 @@ const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
           </th>
           <th>Remarks</th>
           <th className="sortable" onClick={() => onSort('createdAt')}>
-            Created At {getSortArrow('createdAt')}
+            Created By {getSortArrow('createdAt')}
           </th>
-          <th>Assigned To</th>
+          <th className="sortable" onClick={() => onSort('assignedTo')} >
+             Assigned To {getSortArrow('assignedTo')}
+          </th>
           <th>Actions</th>
         </tr>
       </thead>
