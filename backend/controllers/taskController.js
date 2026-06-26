@@ -40,7 +40,7 @@ const getTask = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 4;
     const skip = (page - 1) * limit;
-    const { status } = req.query; 
+    const { status, sortBy, sortOrder } = req.query; 
 
     const filter = {
       $or: [{ createdBy: req.user._id }, { assignedTo: req.user._id }]
