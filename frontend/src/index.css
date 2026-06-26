@@ -391,3 +391,12 @@ button:disabled {
   border-radius: 6px;
   font-size: 0.875rem;
 }
+
+.task-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.task-table th.sortable:hover {
+  background-color: #2d2d4e;
+}

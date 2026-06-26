@@ -47,6 +47,14 @@ const Dashboard = () => {
     }
   };
 
+  const handleSort = (column) => {
+
+    const newOrder = sortBy === column && sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortBy(column);
+    setSortOrder(newOrder);
+    fetchTasks(1, statusFilter, column, newOrder);
+  };
+
   useEffect(() => {
     fetchTasks(1);
     fetchAssignees();
@@ -60,44 +68,28 @@ const Dashboard = () => {
       <h3>My Tasks</h3>
 
       <div className="filter-sort-bar">
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              fetchTasks(1, e.target.value);
-            }}
-          >
-            <option value="">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="unable-to-complete">Unable to Complete</option>
-          </select>
+        <select
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            fetchTasks(1, e.target.value);
+          }}
+        >
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+          <option value="unable-to-complete">Unable to Complete</option>
+        </select>
 
-          <select
-            value={`${sortBy}-${sortOrder}`}
-            onChange={(e) => {
-              const [by, order] = e.target.value.split('-');
-              setSortBy(by);
-              setSortOrder(order);
-              fetchTasks(1, statusFilter, by, order);
-            }}
-          >
-            <option value="createdAt-desc">Newest First</option>
-            <option value="createdAt-asc">Oldest First</option>
-            <option value="title-asc">Title A-Z</option>
-            <option value="title-desc">Title Z-A</option>
-            <option value="status-asc">Status A-Z</option>
-          </select>
-
-          {statusFilter && (
-            <button onClick={() => {
-              setStatusFilter('');
-              fetchTasks(1, '');
-            }}>
-              Clear Filter
-            </button>
-          )}
+        {statusFilter && (
+          <button onClick={() => {
+            setStatusFilter('');
+            fetchTasks(1, '');
+          }}>
+            Clear Filter
+          </button>
+        )}
       </div>
 
       <CreateTask assignees={assignees} onTaskCreated={() => fetchTasks(1)} />
@@ -106,7 +98,14 @@ const Dashboard = () => {
         <p>Loading tasks...</p>
       ) : (
         <>
-          <TaskList tasks={tasks} onTaskUpdated={() => fetchTasks(page)} />
+          <TaskList
+            tasks={tasks}
+            onTaskUpdated={() => fetchTasks(page)}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSort={handleSort}
+          />
+          
           <Pagination
             page={page}
             totalPages={totalPages}

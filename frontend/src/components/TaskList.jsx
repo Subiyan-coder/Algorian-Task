@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import EditTask from './EditTask';
 import api from '../api/axios';
 
-const TaskList = ({ tasks, onTaskUpdated }) => {
+const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
   const { user } = useAuth();
   const [editingTaskId, setEditingTaskId] = useState(null);
 
@@ -17,17 +17,28 @@ const TaskList = ({ tasks, onTaskUpdated }) => {
     }
   };
 
+  const getSortArrow = (column) => {
+    if (sortBy !== column) return '↕';
+    return sortOrder === 'asc' ? '↑' : '↓';
+  };
+
   return (
     <table className="task-table">
       <thead>
         <tr>
-          <th>Title</th>
+          <th className="sortable" onClick={() => onSort('title')}>
+            Title {getSortArrow('title')}
+          </th>
           <th>Description</th>
-          <th>Status</th>
+          <th className="sortable" onClick={() => onSort('status')}>
+            Status {getSortArrow('status')}
+          </th>
           <th>Remarks</th>
-          <th>Created By</th>
+          <th className="sortable" onClick={() => onSort('createdAt')}>
+            Created At {getSortArrow('createdAt')}
+          </th>
           <th>Assigned To</th>
-          <th>Actions</th>         
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
