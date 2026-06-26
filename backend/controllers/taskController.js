@@ -40,28 +40,42 @@ const getTask = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 4;
     const skip = (page - 1) * limit;
+    const { status } = req.query; 
 
     const filter = {
       $or: [{ createdBy: req.user._id }, { assignedTo: req.user._id }]
     };
 
-    const total = await Task.countDocuments(filter);
+    if (status && ['pending', 'in-progress', 'completed', 'unable-to-complete'].includes(status)) {
+      filter.status = status;
+    }
 
+    const sortOptions = {};
+
+        if (sortBy === 'title') {
+        sortOptions.title = sortOrder === 'desc' ? -1 : 1;
+        } else if (sortBy === 'status') {
+        sortOptions.status = sortOrder === 'desc' ? -1 : 1;
+        } else {
+        sortOptions.createdAt = sortOrder === 'asc' ? 1 : -1;
+        }
+
+    const total = await Task.countDocuments(filter);
     const tasks = await Task.find(filter)
       .populate('createdBy', 'name email')
       .populate('assignedTo', 'name email')
-      .sort({ createdAt: -1 })
+      .sort(sortOptions)
       .skip(skip)
       .limit(limit);
 
-    successResponse(res, 200,{
+    return successResponse(res, 200, {
       tasks,
       page,
       totalPages: Math.ceil(total / limit) || 1,
       totalItems: total
-    }, ' Tasks Fetched Successfully');
+    }, 'Tasks fetched successfully');
   } catch (err) {
-    next (err)
+    next(err);
   }
 };
 

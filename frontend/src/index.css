@@ -359,3 +359,35 @@ button:disabled {
   font-size: 0.9rem;
   color: #555;
 }
+
+/* ─── Filter/Sort Bar ─────────────────────────────── */
+
+.filter-sort-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-sort-bar select {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+}
+
+.filter-sort-bar select:focus {
+  border-color: #2563eb;
+}
+
+.filter-sort-bar button {
+  background-color: #ef4444;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}

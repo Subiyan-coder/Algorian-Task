@@ -9,6 +9,7 @@ const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
     remarks: task.remarks || ''
   });
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSave = async () => {
     setSaving(true);
@@ -16,6 +17,9 @@ const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
       await api.put(`/tasks/${task._id}`, form);
       onSaved();
     } catch (err) {
+        const message = err.response?.data?.message || 'Update failed';
+        const errors = err.response?.data?.errors || [];
+        setError(errors.length > 0 ? errors.join(', ') : message);
       console.error(err);
     } finally {
       setSaving(false);
@@ -53,7 +57,7 @@ const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
           value={form.remarks}
           onChange={(e) => setForm({ ...form, remarks: e.target.value })}
         />
-
+        {error && <p className="error">{error}</p>}
         <button onClick={handleSave} disabled={saving}>
           {saving ? 'Saving...' : 'Save'}
         </button>

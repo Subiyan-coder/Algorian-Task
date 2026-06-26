@@ -7,24 +7,34 @@ import Pagination from '../components/Pagination';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  
   const [tasks, setTasks] = useState([]);
   const [assignees, setAssignees] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('desc');
 
-  const fetchTasks = async (pageNum = 1) => {
-    setLoading(true);
-    try {
-      const { data } = await api.get(`/tasks?page=${pageNum}&limit=4`);
-      setTasks(data.data.tasks);
-      setTotalPages(data.data.totalPages);
-      setPage(data.data.page);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const fetchTasks = async (pageNum = 1, status = statusFilter, by = sortBy, order = sortOrder) => {
+      setLoading(true);
+
+      try {
+        const statusParam = status ? `&status=${status}` : '';
+        const sortParam = `&sortBy=${by}&sortOrder=${order}`;
+        const { data } = await api.get(`/tasks?page=${pageNum}&limit=4${statusParam}${sortParam}`);
+
+        setTasks(data.data.tasks);
+        setTotalPages(data.data.totalPages);
+        setPage(data.data.page);
+
+      } catch (err) {
+        console.error(err);
+
+      } finally {
+        setLoading(false);
+      }
   };
 
   const fetchAssignees = async () => {
@@ -48,6 +58,47 @@ const Dashboard = () => {
     <div className="page-container">
       <h2>Welcome, {user.name}</h2>
       <h3>My Tasks</h3>
+
+      <div className="filter-sort-bar">
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              fetchTasks(1, e.target.value);
+            }}
+          >
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="unable-to-complete">Unable to Complete</option>
+          </select>
+
+          <select
+            value={`${sortBy}-${sortOrder}`}
+            onChange={(e) => {
+              const [by, order] = e.target.value.split('-');
+              setSortBy(by);
+              setSortOrder(order);
+              fetchTasks(1, statusFilter, by, order);
+            }}
+          >
+            <option value="createdAt-desc">Newest First</option>
+            <option value="createdAt-asc">Oldest First</option>
+            <option value="title-asc">Title A-Z</option>
+            <option value="title-desc">Title Z-A</option>
+            <option value="status-asc">Status A-Z</option>
+          </select>
+
+          {statusFilter && (
+            <button onClick={() => {
+              setStatusFilter('');
+              fetchTasks(1, '');
+            }}>
+              Clear Filter
+            </button>
+          )}
+      </div>
 
       <CreateTask assignees={assignees} onTaskCreated={() => fetchTasks(1)} />
 
