@@ -6,7 +6,7 @@ const createTask = async (req, res, next) => {
     try {
         const {title, description, assignedTo} = req.body;
 
-        const missingFields = checkRequiredFields({title, description, assignedto});
+        const missingFields = checkRequiredFields({title, description, assignedTo});
         if (missingFields.length > 0) {
             return errorResponse(res, 400, 'Please fill all required fields', missingFields);
         }
