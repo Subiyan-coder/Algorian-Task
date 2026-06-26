@@ -1,12 +1,12 @@
 const User = require('../models/user');
 const generateToken = require('../utils/generateToken');
-const { successResponse, errorResponse, checkRequiredFiels } = require('../utils/apiResponse')
+const { successResponse, errorResponse, checkRequiredFields } = require('../utils/apiResponse')
 const register = async (req, res, next) => {
     try {
         const {name, email, contact, password, role} = req.body;
 
          
-        const missingFields = checkRequiredFiels({name, email, contact, password});
+        const missingFields = checkRequiredFields({name, email, contact, password});
 
         if(missingFields.length > 0) {
             return errorResponse(res, 400, 'Please fill all required fields',missingFeilds)

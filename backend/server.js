@@ -28,6 +28,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 
 app.use((err, req, res, next) => {
+  console.error('GLOBAL ERROR:', err);
   console.error(err.stack);
 
   if (err.name === 'ValidationError' ){

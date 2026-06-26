@@ -17,9 +17,9 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const { data } = await api.get(`/tasks?page=${pageNum}&limit=4`);
-      setTasks(data.tasks);
-      setTotalPages(data.totalPages);
-      setPage(data.page);
+      setTasks(data.data.tasks);
+      setTotalPages(data.data.totalPages);
+      setPage(data.data.page);
     } catch (err) {
       console.error(err);
     } finally {
@@ -31,7 +31,7 @@ const Dashboard = () => {
     const targetRole = user.role === 'admin' ? 'staff' : 'admin';
     try {
       const { data } = await api.get(`/users?role=${targetRole}`);
-      setAssignees(data);
+      setAssignees(data.data);
     } catch (err) {
       console.error(err);
     }

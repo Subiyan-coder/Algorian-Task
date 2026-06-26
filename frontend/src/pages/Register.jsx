@@ -22,7 +22,7 @@ const Register = () => {
 
         try {
             const {data} = await api.post('/auth/register', { name, email, contact, password, role });
-            login(data);
+            login(data.data);
             navigate('/tasks');
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed');

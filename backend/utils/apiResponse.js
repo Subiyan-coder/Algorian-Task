@@ -16,10 +16,10 @@ const errorResponse = ( res, statusCode, message, errors = []) => {
     });
 };
 
-const checkRequiredFiels = (requiredFields) => {
+const checkRequiredFields = (requiredFields) => {
     return Object.keys(requiredFields)
-    .filter(field => requiredFields(field))
-    .map(field = `${field} is required`);
+    .filter(field => !requiredFields[field])
+    .map(field => `${field} is required`);
 };
 
-module.exports = { successResponse, errorResponse, checkRequiredFiels };
+module.exports = { successResponse, errorResponse, checkRequiredFields };

@@ -1,6 +1,6 @@
 const Task = require('../models/Task');
 const User = require('../models/user');
-const { successResponse, errorResponse, checkRequiredFiels } = require('../utils/apiResponse')
+const { successResponse, errorResponse, checkRequiredFields } = require('../utils/apiResponse')
 
 const createTask = async (req, res, next) => {
     try {
