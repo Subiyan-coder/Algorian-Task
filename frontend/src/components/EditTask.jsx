@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import api from '../api/axios';
+import { updateTaskSchema, getZoderrorss } from '../utils/validationSchemas';
 
 const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
   const [form, setForm] = useState({
@@ -9,18 +10,26 @@ const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
     remarks: task.remarks || ''
   });
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
 
   const handleSave = async () => {
     setSaving(true);
+    const result = updateTaskSchema.safeParse(form);
+    if (!result.success) {
+      setErrors(getZodErrors(result.error));
+      setSaving(false);
+      return;
+    }
+
     try {
       await api.put(`/tasks/${task._id}`, form);
       onSaved();
     } catch (err) {
-        const message = err.response?.data?.message || 'Update failed';
-        const errors = err.response?.data?.errors || [];
-        setError(errors.length > 0 ? errors.join(', ') : message);
-      console.error(err);
+      const message = err.response?.data?.message || 'Update failed';
+      const backendErrors = err.response?.data?.errors || [];
+      setErrors({
+        general: backendErrors.length > 0 ? backendErrors.join(', ') : message
+      });
     } finally {
       setSaving(false);
     }
@@ -29,16 +38,22 @@ const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
   return (
     <tr>
       <td colSpan="6">
+        {errors.general && <p className="error">{errors.general}</p>}
+
         {isCreator && (
           <>
             <input
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
             />
+            {errors.title && <p className="error">{errors.title}</p>}
+
             <input
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
             />
+            {errors.description && <p className="error">{errors.description}</p>}
+
           </>
         )}
 
@@ -51,13 +66,15 @@ const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
           <option value="completed">Completed</option>
           <option value="unable-to-complete">Unable to Complete</option>
         </select>
+        {errors.status && <p className="error">{errors.status}</p>}
 
         <input
           placeholder="Remarks"
           value={form.remarks}
           onChange={(e) => setForm({ ...form, remarks: e.target.value })}
         />
-        {error && <p className="error">{error}</p>}
+        {errors.remarks && <p className="error">{errors.remarks}</p>}
+
         <button onClick={handleSave} disabled={saving}>
           {saving ? 'Saving...' : 'Save'}
         </button>
