@@ -34,11 +34,14 @@ const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
             Status {getSortArrow('status')}
           </th>
           <th>Remarks</th>
-          <th className="sortable" onClick={() => onSort('createdAt')}>
-            Created By {getSortArrow('createdAt')}
+          <th>
+            Created By
           </th>
-          <th className="sortable" onClick={() => onSort('assignedTo')} >
-             Assigned To {getSortArrow('assignedTo')}
+          <th>
+             Assigned To
+          </th>
+          <th className="sortable" onClick={() => onSort('createdAt')}>
+            Date {getSortArrow('createdAt')}
           </th>
           <th>Actions</th>
         </tr>
@@ -46,7 +49,7 @@ const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
       <tbody>
         {tasks.length === 0 && (
           <tr>
-            <td colSpan="6">No tasks found</td>
+            <td colSpan="8">No tasks found</td>
           </tr>
           
         )}
@@ -71,7 +74,7 @@ const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
           }
 
           return (
-            <tr className='edit-row' key={task._id}>
+            <tr key={task._id}>
               <td>{task.title}</td>
               <td>{task.description}</td>
               <td>
@@ -80,6 +83,7 @@ const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
               <td>{task.remarks || '—'}</td>
               <td>{task.createdBy?.name}</td>
               <td>{task.assignedTo?.name}</td>
+              <td>{new Date(task.createdAt).toLocaleDateString()}</td>
               <td>
                 <button className='btn-secondary' onClick={() => setEditingTaskId(task._id)}>Edit</button>
                 {isCreator && (
