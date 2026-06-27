@@ -21,7 +21,6 @@ const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
     if (sortBy !== column) return '↕';
     return sortOrder === 'asc' ? '↑' : '↓';
   };
-console.log('TaskList rendering with tasks:', tasks.map(t => t.title));
 
   return (
     <table className="task-table">

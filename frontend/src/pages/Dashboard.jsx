@@ -24,8 +24,7 @@ const Dashboard = () => {
       try {
         const statusParam = status ? `&status=${status}` : '';
         const sortParam = `&sortBy=${by}&sortOrder=${order}`;
-        const { data } = await api.get(`/tasks?page=${pageNum}&limit=4${statusParam}${sortParam}&_t=${Date.now()}`);
-        console.log('response tasks:', data.data.tasks.map(t => t.title));
+        const { data } = await api.get(`/tasks?page=${pageNum}&limit=4${statusParam}${sortParam}`);
 
         setTasks(data.data.tasks);
         setTotalPages(data.data.totalPages);
