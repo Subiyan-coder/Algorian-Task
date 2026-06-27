@@ -11,7 +11,7 @@ const CreateTask = ({ assignees, onTaskCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors('');
+    setErrors({});
 
     if (!assignedTo) {
       setErrors('Please select someone to assign this task to');

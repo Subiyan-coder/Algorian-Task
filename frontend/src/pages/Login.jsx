@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { loginSchema, getZodErrors } from '../utils/validationSchemas';
@@ -15,7 +15,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setError({});
         setLoading(true);
     
         const result = loginSchema.safeParse({ email, password });
@@ -64,7 +64,7 @@ const Login = () => {
                 </button>
             </form>
 
-            <p> Don't have an account? <a href="/register">Register</a> </p>
+            <p> Don't have an account? <Link to="/register">Register</Link> </p>
 
         </div>
     );
