@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import api from '../api/axios';
-import { updateTaskSchema, getZoderrorss } from '../utils/validationSchemas';
+import { updateTaskSchema, getZodErrors } from '../utils/validationSchemas';
 
 const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
   const [form, setForm] = useState({
