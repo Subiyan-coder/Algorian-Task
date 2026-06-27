@@ -49,14 +49,14 @@ const Login = () => {
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                required />
+                 />
                 {error.email && <p className="error">{error.email}</p>}
 
                 <input type="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                required />
+                 />
                 {error.password && <p className="error">{error.password}</p>}
 
                 <button type="submit" disabled={loading}>
