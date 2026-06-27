@@ -52,7 +52,6 @@ const CreateTask = ({ assignees, onTaskCreated }) => {
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        required
       />
       {errors.title && <p className="error">{errors.title}</p>}
 
