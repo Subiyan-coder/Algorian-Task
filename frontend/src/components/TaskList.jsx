@@ -21,6 +21,7 @@ const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
     if (sortBy !== column) return '↕';
     return sortOrder === 'asc' ? '↑' : '↓';
   };
+console.log('TaskList rendering with tasks:', tasks.map(t => t.title));
 
   return (
     <table className="task-table">
@@ -34,11 +35,11 @@ const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
             Status {getSortArrow('status')}
           </th>
           <th>Remarks</th>
-          <th>
-            Created By
+          <th className="sortable" onClick={() => onSort('createdBy')}>
+            Created By {getSortArrow('createdBy')}
           </th>
-          <th>
-             Assigned To
+          <th className="sortable" onClick={() => onSort('assignedTo')}>
+            Assigned To {getSortArrow('assignedTo')}
           </th>
           <th className="sortable" onClick={() => onSort('createdAt')}>
             Date {getSortArrow('createdAt')}

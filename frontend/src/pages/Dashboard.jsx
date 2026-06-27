@@ -18,12 +18,14 @@ const Dashboard = () => {
   const [sortOrder, setSortOrder] = useState('desc');
 
   const fetchTasks = async (pageNum = 1, status = statusFilter, by = sortBy, order = sortOrder) => {
+      console.log('fetchTasks called with:', { pageNum, status, by, order });
       setLoading(true);
 
       try {
         const statusParam = status ? `&status=${status}` : '';
         const sortParam = `&sortBy=${by}&sortOrder=${order}`;
-        const { data } = await api.get(`/tasks?page=${pageNum}&limit=4${statusParam}${sortParam}`);
+        const { data } = await api.get(`/tasks?page=${pageNum}&limit=4${statusParam}${sortParam}&_t=${Date.now()}`);
+        console.log('response tasks:', data.data.tasks.map(t => t.title));
 
         setTasks(data.data.tasks);
         setTotalPages(data.data.totalPages);
