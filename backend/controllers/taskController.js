@@ -12,6 +12,8 @@ const createTask = async (req, res, next) => {
         }
 
         const assignee = await User.findById(assignedTo);
+        const expectedRole = req.user.role === 'staff' ? 'admin' : 'staff';
+
         if (!assignee) {
             return errorResponse(res, 400, `As a ${req.user.role}, you can only assign tasks to ${expectedRole}`);
         }
