@@ -18,8 +18,6 @@ const createTask = async (req, res, next) => {
             return errorResponse(res, 400, `As a ${req.user.role}, you can only assign tasks to ${expectedRole}`);
         }
 
-        const expectedRole = req.user.role === 'staff' ? 'admin' : 'staff';
-
         if (assignee.role !== expectedRole) {
             return res.status(400)
             .json({ message: `As a ${req.user.role}, you can only assign tasks to ${expectedRole}` });
