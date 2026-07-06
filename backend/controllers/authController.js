@@ -1,9 +1,10 @@
 const User = require('../models/user');
 const generateToken = require('../utils/generateToken');
 const { successResponse, errorResponse, checkRequiredFields } = require('../utils/apiResponse')
+
 const register = async (req, res, next) => {
     try {
-        const {name, email, contact, password, role} = req.body;
+        const {name, email, contact, password} = req.body;
 
          
         const missingFields = checkRequiredFields({name, email, contact, password});
@@ -14,7 +15,7 @@ const register = async (req, res, next) => {
 
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return errorResponse( res, 400, 'An account with this EMAIL already exists', ['email is taken'] )
+            return errorResponse(res, 409, 'An account with this email already exists', ['Email already taken']);
         }
         
         const user = await User.create({
@@ -22,7 +23,7 @@ const register = async (req, res, next) => {
             email,
             contact,
             password,
-            role : role === 'admin' ? 'admin' : 'staff'
+            role : 'staff'
         });
 
         return successResponse( res, 201, {
@@ -30,9 +31,8 @@ const register = async (req, res, next) => {
             name: user.name,
             email: user.email,
             contact: user.contact,
-            role: user.role,
             token: generateToken(user._id, user.role)
-        }, ' User registered Successfully ');
+        }, 'User registered Successfully');
     } catch (err) {
         next(err);
     }

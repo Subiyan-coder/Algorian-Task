@@ -21,11 +21,7 @@ const registerRules = [
   body('contact')
     .trim()
     .notEmpty().withMessage('Contact number is required')
-    .matches(/^[0-9]{10}$/).withMessage('Contact must be a valid 10-digit number'),
-
-  body('role')
-    .optional()
-    .isIn(['admin', 'staff']).withMessage('Role must be either admin or staff')
+    .matches(/^[0-9]{10}$/).withMessage('Contact must be a valid 10-digit number')
 ];
 
 const loginRules = [

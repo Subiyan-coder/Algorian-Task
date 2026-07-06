@@ -9,7 +9,6 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [contact, setContact] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('staff');
   const [errors, setErrors] = useState({}); 
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +21,7 @@ const Register = () => {
     setLoading(true);
 
 
-    const result = registerSchema.safeParse({ name, email, contact, password, role });
+    const result = registerSchema.safeParse({ name, email, contact, password });
 
     if (!result.success) {
       setErrors(getZodErrors(result.error));
@@ -31,7 +30,7 @@ const Register = () => {
     }
 
     try {
-      const { data } = await api.post('/auth/register', { name, email, contact, password, role });
+      const { data } = await api.post('/auth/register', { name, email, contact, password });
       login(data.data);
       navigate('/tasks');
     } catch (err) {
@@ -84,10 +83,6 @@ const Register = () => {
         />
         {errors.password && <p className="error">{errors.password}</p>}
 
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="staff">Staff</option>
-          <option value="admin">Admin</option>
-        </select>
 
         <button type="submit" disabled={loading}>
           {loading ? 'Registering...' : 'Register'}
