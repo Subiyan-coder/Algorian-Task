@@ -10,12 +10,12 @@ const register = async (req, res, next) => {
         const missingFields = checkRequiredFields({name, email, contact, password});
 
         if(missingFields.length > 0) {
-            return errorResponse(res, 400, 'Please fill all required fields',missingFeilds)
+            return errorResponse(res, 400, 'Missing required fields',missingFields)
         }
 
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return errorResponse(res, 409, 'An account with this email already exists', ['Email already taken']);
+            return errorResponse(res, 409, 'Email already registered', ['Email already exists']);
         }
         
         const user = await User.create({
@@ -32,7 +32,7 @@ const register = async (req, res, next) => {
             email: user.email,
             contact: user.contact,
             token: generateToken(user._id, user.role)
-        }, 'User registered Successfully');
+        }, 'User registered successfully');
     } catch (err) {
         next(err);
     }
@@ -41,6 +41,12 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+
+        const missingFields = checkRequiredFields({ email, password });
+
+        if (missingFields.length > 0) {
+            return errorResponse(res, 400, 'Missing required fields', missingFields);
+        }
 
         const user = await User.findOne({ email });
         if (user && (await user.matchPassword(password))) {
@@ -51,9 +57,9 @@ const login = async (req, res, next) => {
                 contact: user.contact,
                 role: user.role,
                 token: generateToken(user._id, user.role)
-            }, ' Login Successful ');
+            }, 'Login successful');
         } else {
-            return errorResponse(res, 401, 'Invalid EMAIL or PASSWORD' );
+            return errorResponse(res, 401, 'Invalid email or password');
         }
     } catch (err) {
         next(err);
@@ -61,7 +67,7 @@ const login = async (req, res, next) => {
 };
 
 const getProfile = async (req, res) => {
-    return successResponse ( res, 200, req.user, ' Profile fetched Successfully ')
+    return successResponse(res, 200, req.user, 'Profile fetched successfully');
 };
 
 module.exports = { register, login, getProfile };

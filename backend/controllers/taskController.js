@@ -8,19 +8,18 @@ const createTask = async (req, res, next) => {
 
         const missingFields = checkRequiredFields({title, description, assignedTo});
         if (missingFields.length > 0) {
-            return errorResponse(res, 400, 'Please fill all required fields', missingFields);
+            return errorResponse(res, 400, 'Missing required fields', missingFields);
         }
 
         const assignee = await User.findById(assignedTo);
         const expectedRole = req.user.role === 'staff' ? 'admin' : 'staff';
 
         if (!assignee) {
-            return errorResponse(res, 400, `As a ${req.user.role}, you can only assign tasks to ${expectedRole}`);
+            return errorResponse(res, 404, 'Assignee not found');
         }
 
         if (assignee.role !== expectedRole) {
-            return res.status(400)
-            .json({ message: `As a ${req.user.role}, you can only assign tasks to ${expectedRole}` });
+             return errorResponse(res, 403, `As a ${req.user.role}, you can only assign tasks to a ${expectedRole}`, []);
         }
 
         const task = await Task.create({
@@ -132,14 +131,14 @@ const updateTask = async (req, res, next) => {
         const task = await Task.findById(req.params.taskId);
 
         if (!task) {
-            return errorResponse(res, 403, 'You do not have permission to update this task');
+            return errorResponse(res, 404, 'Task not found');
         }
 
         const isCreator = task.createdBy.toString() === req.user._id.toString();
         const isAssignee = task.assignedTo.toString() === req.user._id.toString();
 
         if (!isCreator && !isAssignee) {
-            return res.status(403).json({ message: 'You do not have permission to update this task' });
+            return errorResponse(res, 403, 'You do not have permission to update this task');
         }
 
         if (isCreator) {
@@ -153,7 +152,7 @@ const updateTask = async (req, res, next) => {
         }
 
         const updated = await task.save();
-        successResponse (res, 200, updated, ' Task updated Successfully' );
+        successResponse (res, 200, updated, 'Task updated successfully' );
 
     } catch (err) {
         next (err);
@@ -165,7 +164,7 @@ const deleteTask = async (req, res, next) => {
         const task = await Task.findById(req.params.taskId);
 
         if (!task) {
-            return errorResponse(res, 404, 'No task found with the provided ID');
+            return errorResponse(res, 404, 'Task not found');
         }
 
         const isCreator = task.createdBy.toString() === req.user._id.toString();

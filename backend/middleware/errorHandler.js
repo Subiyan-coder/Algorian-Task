@@ -21,7 +21,7 @@ const errorHandlers = {
 
 const handleDuplicateKeyError = (err, res) => {
   const field = Object.keys(err.keyValue)[0];
-  return errorResponse(res, 409, `${field} already exists`, [`${field} must be unique`]);
+  return errorResponse(res, 409, 'Duplicate value', [`${field} already exists`]);
 };
 
 const globalErrorHandler = (err, req, res, next) => {
@@ -39,7 +39,7 @@ const globalErrorHandler = (err, req, res, next) => {
   return errorResponse(
     res,
     err.statusCode || 500,
-    'An unexpected error occurred. Please try again',
+    'An unexpected error occurred. Please try again.',
     []
   );
 };

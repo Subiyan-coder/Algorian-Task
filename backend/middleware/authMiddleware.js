@@ -13,7 +13,7 @@ const protect = async (req, res, next) => {
             req.user = await User.findById(decoded.id).select('-password');
             
             if (!req.user) {
-                return errorResponse(res, 401, 'The account associated with this token no longer exists');
+                return errorResponse(res, 401, 'User account no longer exists');
             }
 
             next();
@@ -26,7 +26,7 @@ const protect = async (req, res, next) => {
             return errorResponse(res, 401, 'Invalid token. Please log in again');
         }
     } else {
-        return errorResponse(res, 401, 'Access denied. No token provided');   
+        return errorResponse(res, 401, 'Authentication token is required');   
     }
 }
 
