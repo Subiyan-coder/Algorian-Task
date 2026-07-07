@@ -14,9 +14,15 @@ export const AuthProvider = ({children}) => {
         setUser(userData);
     };
 
-    const logout = () => {
+    const logout = async () => {
+    try {
+        await api.post('/auth/logout');
+    } catch (err) {
+        console.error(err);
+    } finally {
         localStorage.removeItem('user');
         setUser(null);
+    }
     };
 
     return <AuthContext.Provider value={{user, login, logout}}>

@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const allowedOrigins = [
   'https://algorian-task.vercel.app',
@@ -14,6 +15,7 @@ const applyGlobalMiddleware = (app) => {
     credentials: true  
   }));
 
+  app.use(cookieParser());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 };
