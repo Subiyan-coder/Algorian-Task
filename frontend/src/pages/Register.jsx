@@ -3,41 +3,66 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { registerSchema, getZodErrors } from '../utils/validationSchemas';
+import FormInput from '../components/FormInput';
+import PasswordInput from '../components/PasswordInput';
+import Alert from '../components/Alert';
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [contact, setContact] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({}); 
+  const [touched, setTouched] = useState({
+    name: false, email: false, contact: false, password: false
+  });
+  const [errors, setErrors] = useState({});
+  const [alert, setAlert] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors({});
-    setLoading(true);
-
-
-    const result = registerSchema.safeParse({ name, email, contact, password });
+  const validateField = (field, value) => {
+    const formData = { name, email, contact, password, [field]: value };
+    const result = registerSchema.safeParse(formData);
 
     if (!result.success) {
+      const fieldErrors = getZodErrors(result.error);
+      setErrors(prev => ({ ...prev, [field]: fieldErrors[field] }));
+    } else {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const handleChange = (field, value, setter) => {
+    setter(value);
+    setTouched(prev => ({ ...prev, [field]: true }));
+    validateField(field, value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setAlert({ type: '', message: '' });
+    setTouched({ name: true, email: true, contact: true, password: true });
+
+    const result = registerSchema.safeParse({ name, email, contact, password });
+    if (!result.success) {
       setErrors(getZodErrors(result.error));
-      setLoading(false);
-      return; 
+      return;
     }
 
+    setLoading(true);
     try {
       const { data } = await api.post('/auth/register', { name, email, contact, password });
       login(data.data);
-      navigate('/tasks');
+      setAlert({ type: 'success', message: 'Account created successfully! Redirecting...' });
+      setTimeout(() => navigate('/tasks'), 1000);
     } catch (err) {
       const message = err.response?.data?.message || 'Registration failed';
       const backendErrors = err.response?.data?.errors || [];
-      setErrors({
-        general: backendErrors.length > 0 ? backendErrors.join(', ') : message
+      setAlert({
+        type: 'error',
+        message: backendErrors.length > 0 ? backendErrors.join(', ') : message
       });
     } finally {
       setLoading(false);
@@ -48,44 +73,43 @@ const Register = () => {
     <div className="form-container">
       <h2>Register</h2>
 
-      {errors.general && <p className="error">{errors.general}</p>}
+      <Alert type={alert.type} message={alert.message} />
 
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
+        <FormInput
           placeholder="Full name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => handleChange('name', e.target.value, setName)}
+          error={errors.name}
+          touched={touched.name}
         />
-        {errors.name && <p className="error">{errors.name}</p>}
 
-        <input
+        <FormInput
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => handleChange('email', e.target.value, setEmail)}
+          error={errors.email}
+          touched={touched.email}
         />
-        {errors.email && <p className="error">{errors.email}</p>}
 
-        <input
-          type="text"
+        <FormInput
           placeholder="Contact number"
           value={contact}
-          onChange={(e) => setContact(e.target.value)}
+          onChange={(e) => handleChange('contact', e.target.value, setContact)}
+          error={errors.contact}
+          touched={touched.contact}
         />
-        {errors.contact && <p className="error">{errors.contact}</p>}
 
-        <input
-          type="password"
-          placeholder="Password"
+        <PasswordInput
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => handleChange('password', e.target.value, setPassword)}
+          error={errors.password}
+          touched={touched.password}
         />
-        {errors.password && <p className="error">{errors.password}</p>}
-
 
         <button type="submit" disabled={loading}>
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? 'Creating account...' : 'Register'}
         </button>
       </form>
 
