@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true},
     contact: { type: String, required: true, trim: true},
     password: { type: String, required: true },
-    role: { type: String, enum: ['admin', 'staff'], default: 'staff'}
+    role: { type: String, enum: ['admin', 'staff'], default: 'staff'},
+    passwordChangedAt: { type: Date, default: null}
     },
     { timestamps: true}
 );
@@ -17,7 +18,17 @@ userSchema.pre('save', async function(){
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 
+    this.passwordChangedAt = Date.now() - 1000;
+
 });
+
+userSchema.methods.changedPasswordAfter = function (tokenIssuedAt) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return tokenIssuedAt < changedTimestamp;
+  }
+  return false;
+};
 
 userSchema.methods.matchPassword = async function(enteredPassword){
     return await bcrypt.compare(enteredPassword, this.password);

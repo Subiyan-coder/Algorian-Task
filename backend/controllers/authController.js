@@ -118,5 +118,32 @@ const logout = async (req, res) => {
   return successResponse(res, 200, null, 'Logged out successfully');
 };
 
+const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
 
-module.exports = { register, login, getProfile, refreshToken, logout };
+    if (!currentPassword || !newPassword) {
+      return errorResponse(res, 400, 'Please provide current and new password', []);
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!(await user.matchPassword(currentPassword))) {
+      return errorResponse(res, 401, 'Current password is incorrect', []);
+    }
+
+    if (currentPassword === newPassword) {
+      return errorResponse(res, 400, 'New password must be different from current password', []);
+    }
+
+    user.password = newPassword;
+    await user.save(); // triggers pre-save hook - hashes password and sets passwordChangedAt
+
+    return sendTokenResponse(user, 200, res, 'Password changed successfully');
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+module.exports = { register, login, getProfile, refreshToken, logout, changePassword };

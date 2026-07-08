@@ -10,11 +10,17 @@ const protect = async (req, res, next) => {
             token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-            req.user = await User.findById(decoded.id).select('-password');
+            const user = await User.findById(decoded.id).select('-password');
             
-            if (!req.user) {
+            if (!user) {
                 return errorResponse(res, 401, 'User account no longer exists');
             }
+
+            if (user.changedPasswordAfter(decoded.iat)) {
+                return errorResponse(res, 401, 'Password was recently changed. Please log in again', []);
+            }
+
+            req.user = user;
 
             next();
         }
