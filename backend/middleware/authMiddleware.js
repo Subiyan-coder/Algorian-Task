@@ -13,7 +13,7 @@ const protect = async (req, res, next) => {
             const user = await User.findById(decoded.id).select('-password');
             
             if (!user) {
-                return errorResponse(res, 401, 'User account no longer exists');
+                return errorResponse(res, 401, 'User account no longer exists', []);
             }
 
             if (user.changedPasswordAfter(decoded.iat)) {
@@ -23,16 +23,14 @@ const protect = async (req, res, next) => {
             req.user = user;
 
             next();
-        }
-
-        catch (error) {
+        } catch (error) {
            if (error.name === 'TokenExpiredError') {
-                return errorResponse(res, 401, 'Session expired. Please log in again');
+                return errorResponse(res, 401, 'Session expired. Please log in again', []);
             }
-            return errorResponse(res, 401, 'Invalid token. Please log in again');
+            return errorResponse(res, 401, 'Invalid token. Please log in again', []);
         }
     } else {
-        return errorResponse(res, 401, 'Authentication token is required');   
+        return errorResponse(res, 401, 'Authentication token is required', []);   
     }
 }
 

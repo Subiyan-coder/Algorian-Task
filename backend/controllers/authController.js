@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const { generateAccessToken, generateRefreshToken } = require('../utils/generateToken');
-const { successResponse, errorResponse, checkRequiredFields } = require('../utils/apiResponse')
+const { successResponse, errorResponse, checkRequiredFields } = require('../utils/apiResponse');
 
 
 const sendTokenResponse = (user, statusCode, res, message) => {
@@ -59,17 +59,11 @@ const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
-        const missingFields = checkRequiredFields({ email, password });
-
-        if (missingFields.length > 0) {
-            return errorResponse(res, 400, 'Missing required fields', missingFields);
-        }
-
         const user = await User.findOne({ email });
         
         if (!user || !(await user.matchPassword(password))) {
             return errorResponse(res, 401, 'Invalid email or password', []);
-            }
+          }
 
             return sendTokenResponse(user, 200, res, 'Login successful');
         } catch (err) {
@@ -86,7 +80,7 @@ const refreshToken = async (req, res, next) => {
     const token = req.cookies.refreshToken;
 
     if (!token) {
-      return errorResponse(res, 401, 'No refresh token provided', []);
+      return errorResponse(res, 401, 'Refresh token is required', []);
     }
 
     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
@@ -113,6 +107,8 @@ const refreshToken = async (req, res, next) => {
 const logout = async (req, res) => {
   res.cookie('refreshToken', '', {
     httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
     expires: new Date(0)
   });
   return successResponse(res, 200, null, 'Logged out successfully');
@@ -137,7 +133,7 @@ const changePassword = async (req, res, next) => {
     }
 
     user.password = newPassword;
-    await user.save(); // triggers pre-save hook - hashes password and sets passwordChangedAt
+    await user.save(); 
 
     return sendTokenResponse(user, 200, res, 'Password changed successfully');
   } catch (err) {

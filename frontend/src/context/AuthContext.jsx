@@ -4,8 +4,7 @@ import api from '../api/axios'
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({children}) => {
-    const [user, setUser] = useState(()=>
-    {
+    const [user, setUser] = useState(()=> {
         const stored = localStorage.getItem('user');
         return stored? JSON.parse(stored) : null;
     });
@@ -26,9 +25,11 @@ export const AuthProvider = ({children}) => {
     }
     };
 
-    return <AuthContext.Provider value={{user, login, logout}}>
-        {children}
-    </AuthContext.Provider>
+return (
+  <AuthContext.Provider value={{ user, login, logout }}>
+    {children}
+  </AuthContext.Provider>
+);
 }
 
 export const useAuth = () => useContext(AuthContext);

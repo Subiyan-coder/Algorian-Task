@@ -10,7 +10,7 @@ router.post('/register', registerRules, validate, register);
 router.post('/login', loginRules, validate, login);
 router.get('/profile', protect, getProfile);
 router.post('/refresh', refreshToken);
-router.post('/logout', logout)
+router.post('/logout', logout);
 router.put('/change-password', protect, changePassword);
 
 module.exports = router;

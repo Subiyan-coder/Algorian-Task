@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import api from '../api/axios';
 import { updateTaskSchema, getZodErrors } from '../utils/validationSchemas';
+import FormInput from './FormInput';
+import Alert from './Alert';
 
 const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
+
   const [form, setForm] = useState({
     title: task.title,
     description: task.description,
@@ -11,7 +14,7 @@ const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
   });
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
-
+  
   const handleSave = async () => {
     setSaving(true);
     const result = updateTaskSchema.safeParse(form);
@@ -38,21 +41,25 @@ const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
   return (
     <tr>
       <td colSpan="6">
-        {errors.general && <p className="error">{errors.general}</p>}
+        {errors.general && <Alert type="error" message={errors.general}/>}
 
         {isCreator && (
           <>
-            <input
+            <FormInput
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
+              error={errors.title}
+              touched={true}
+              placeholder="Title"
             />
-            {errors.title && <p className="error">{errors.title}</p>}
 
-            <input
+            <FormInput
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
+              error={errors.description}
+              touched={true}
+              placeholder="Description"
             />
-            {errors.description && <p className="error">{errors.description}</p>}
 
           </>
         )}
@@ -66,14 +73,14 @@ const EditTask = ({ task, isCreator, onCancel, onSaved }) => {
           <option value="completed">Completed</option>
           <option value="unable-to-complete">Unable to Complete</option>
         </select>
-        {errors.status && <p className="error">{errors.status}</p>}
 
-        <input
+        <FormInput
           placeholder="Remarks"
           value={form.remarks}
           onChange={(e) => setForm({ ...form, remarks: e.target.value })}
+          error={errors.remarks}
+          touched={true}
         />
-        {errors.remarks && <p className="error">{errors.remarks}</p>}
 
         <button onClick={handleSave} disabled={saving}>
           {saving ? 'Saving...' : 'Save'}

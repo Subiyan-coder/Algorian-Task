@@ -3,7 +3,7 @@ const Alert = ({ type, message }) => {
 
   return (
     <div className={`alert alert-${type}`}>
-      <span>{type === 'error' ? '✕' : '✓'}</span>
+      <span>{type === 'error' ? '⚠ Error' : '✔ Success'}</span>
       {message}
     </div>
   );

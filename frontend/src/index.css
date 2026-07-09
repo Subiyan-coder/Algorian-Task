@@ -93,7 +93,7 @@ button:disabled {
   color: #fff;
 }
 
-.navbar button {
+.navbar .btn-logout {
   background-color: #ef4444;
   color: #fff;
 }
@@ -581,19 +581,4 @@ select.invalid:focus {
   gap: 10px;
   justify-content: flex-end;
   margin-top: 20px;
-}
-
-.btn-primary {
-  background-color: #2563eb;
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.875rem;
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }

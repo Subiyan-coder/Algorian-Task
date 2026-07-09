@@ -7,11 +7,12 @@ const seedAdmin = async () => {
   await connectDB();
 
   try {
-    const existingAdmin = await User.findOne({ role: 'admin' });
-
+    
     if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
       throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be configured.');
     }
+
+    const existingAdmin = await User.findOne({ role: 'admin' });
 
     if (existingAdmin) {
       console.log(`Admin already exists: ${existingAdmin.email}`);

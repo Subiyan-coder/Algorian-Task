@@ -55,7 +55,7 @@ const Login = () => {
       const { data } = await api.post('/auth/login', { email, password });
       login(data.data);
       setAlert({ type: 'success', message: 'Login successful! Redirecting...' });
-      setTimeout(() => navigate('/tasks'), 1000);
+      setTimeout(() => navigate('/tasks'), 700);
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed';
       const backendErrors = err.response?.data?.errors || [];

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import CreateTask from '../components/CreateTask';
 import TaskList from '../components/TaskList';
 import Pagination from '../components/Pagination';
+import Alert from '../components/Alert';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -16,9 +17,9 @@ const Dashboard = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [alert, setAlert] = useState({type: '', message: ''});
 
   const fetchTasks = async (pageNum = 1, status = statusFilter, by = sortBy, order = sortOrder) => {
-      console.log('fetchTasks called with:', { pageNum, status, by, order });
       setLoading(true);
 
       try {
@@ -30,9 +31,13 @@ const Dashboard = () => {
         setTotalPages(data.data.totalPages);
         setPage(data.data.page);
 
-      } catch (err) {
-        console.error(err);
-
+      }catch (err) {
+            setAlert({
+                type: 'error',
+                message:
+                    err.response?.data?.message ||
+                    'Unable to load Users.'
+            });
       } finally {
         setLoading(false);
       }
@@ -44,7 +49,12 @@ const Dashboard = () => {
       const { data } = await api.get(`/users?role=${targetRole}`);
       setAssignees(data.data);
     } catch (err) {
-      console.error(err);
+    setAlert({
+        type: 'error',
+        message:
+            err.response?.data?.message ||
+            'Unable to load tasks.'
+      });
     }
   };
 
@@ -92,6 +102,11 @@ const Dashboard = () => {
           </button>
         )}
       </div>
+
+      <Alert
+          type={alert.type}
+          message={alert.message}
+      />
 
       <CreateTask assignees={assignees} onTaskCreated={() => fetchTasks(1)} />
 

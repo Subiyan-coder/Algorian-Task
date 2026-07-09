@@ -10,10 +10,12 @@ export const registerSchema = z.object({
   email: z
     .string()
     .min(1, 'Email is required')
+    .trim()
     .email('Please enter a valid email address'),
 
   contact: z
     .string()
+    .trim()
     .regex(/^[0-9]{10}$/, 'Contact must be exactly 10 digits'),
 
   password: z
@@ -29,6 +31,7 @@ export const loginSchema = z.object({
   email: z
     .string()
     .min(1, 'Email is required')
+    .trim()
     .email('Please enter a valid email address'),
 
   password: z
@@ -41,7 +44,7 @@ export const createTaskSchema = z.object({
     .string()
     .min(3, 'Title must be at least 3 characters')
     .max(100, 'Title must not exceed 100 characters')
-    .regex(/^[a-zA-Z0-9\s]+$/, 'Title must not contain special characters'),
+    .regex(/^[a-zA-Z0-9\s.,()-]+$/, 'Title must not contain special characters'),
 
   description: z
     .string()
@@ -58,7 +61,7 @@ export const updateTaskSchema = z.object({
     .string()
     .min(3, 'Title must be at least 3 characters')
     .max(100, 'Title must not exceed 100 characters')
-    .regex(/^[a-zA-Z0-9\s]+$/, 'Title must not contain special characters')
+    .regex(/^[a-zA-Z0-9\s.,()-]+$/, 'Title must not contain special characters')
     .optional(),
 
   description: z

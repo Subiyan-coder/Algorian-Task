@@ -39,7 +39,7 @@ const createTaskRules = [
     .trim()
     .notEmpty().withMessage('Title is required')
     .isLength({ min: 3, max: 100 }).withMessage('Title must be between 3 and 100 characters')
-    .matches(/^[a-zA-Z0-9\s]+$/).withMessage('Title must not contain special characters'),
+    .matches(/^[a-zA-Z0-9\s.,()\-]+$/).withMessage('Title must not contain special characters'),
 
   body('description')
     .optional()
@@ -56,7 +56,7 @@ const updateTaskRules = [
     .optional()
     .trim()
     .isLength({ min: 3, max: 100 }).withMessage('Title must be between 3 and 100 characters')
-    .matches(/^[a-zA-Z0-9\s]+$/).withMessage('Title must not contain special characters'),
+    .matches(/^[a-zA-Z0-9\s.,()\-]+$/).withMessage('Title must not contain special characters'),
 
   body('description')
     .optional()

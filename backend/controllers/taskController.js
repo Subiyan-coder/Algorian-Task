@@ -1,12 +1,12 @@
 const Task = require('../models/Task');
 const User = require('../models/user');
-const { successResponse, errorResponse, checkRequiredFields } = require('../utils/apiResponse')
+const { successResponse, errorResponse, checkRequiredFields } = require('../utils/apiResponse');
 
 const createTask = async (req, res, next) => {
     try {
         const {title, description, assignedTo} = req.body;
 
-        const missingFields = checkRequiredFields({title, description, assignedTo});
+        const missingFields = checkRequiredFields({title, assignedTo});
         if (missingFields.length > 0) {
             return errorResponse(res, 400, 'Missing required fields', missingFields);
         }
@@ -19,7 +19,7 @@ const createTask = async (req, res, next) => {
         }
 
         if (assignee.role !== expectedRole) {
-             return errorResponse(res, 403, `As a ${req.user.role}, you can only assign tasks to a ${expectedRole}`, []);
+             return errorResponse(res, 400, `As a ${req.user.role}, you can only assign tasks to a ${expectedRole}`, []);
         }
 
         const task = await Task.create({
@@ -29,8 +29,8 @@ const createTask = async (req, res, next) => {
             createdBy: req.user._id
         });
         return successResponse(res, 201, task, 'Task created successfully')
-    } catch (err) {
-        next (err);
+    } catch(err) {
+        next(err);
     }
 }
 
@@ -121,7 +121,7 @@ const getTask = async (req, res, next) => {
       totalItems: total
     }, 'Tasks fetched successfully');
 
-  } catch (err) {
+  } catch(err) {
     next(err);
   }
 };
@@ -152,10 +152,10 @@ const updateTask = async (req, res, next) => {
         }
 
         const updated = await task.save();
-        successResponse (res, 200, updated, 'Task updated successfully' );
+        return successResponse (res, 200, updated, 'Task updated successfully' );
 
-    } catch (err) {
-        next (err);
+    } catch(err) {
+        next(err);
     }
 }
 
@@ -175,8 +175,8 @@ const deleteTask = async (req, res, next) => {
 
         await task.deleteOne();
         return successResponse(res, 200, null, 'Task deleted successfully');
-    } catch (err) {
-        next (err);
+    } catch(err) {
+        next(err);
     }
 };
 
