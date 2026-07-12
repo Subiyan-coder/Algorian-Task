@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
+import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { loginSchema, getZodErrors } from '../utils/validationSchemas';
 import FormInput from '../components/FormInput';
 import PasswordInput from '../components/PasswordInput';
-import Alert from '../components/Alert';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [touched, setTouched] = useState({ email: false, password: false });
   const [errors, setErrors] = useState({});
-  const [alert, setAlert] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
@@ -40,7 +39,6 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setAlert({ type: '', message: '' });
 
     setTouched({ email: true, password: true });
 
@@ -54,15 +52,16 @@ const Login = () => {
     try {
       const { data } = await api.post('/auth/login', { email, password });
       login(data.data);
-      setAlert({ type: 'success', message: 'Login successful! Redirecting...' });
+      toast.success('Logged in successfully!');
       setTimeout(() => navigate('/tasks'), 700);
     } catch (err) {
-      const message = err.response?.data?.message || 'Login failed';
+      const message = err.response?.data?.message || 'Unable to log in.';
       const backendErrors = err.response?.data?.errors || [];
-      setAlert({
-        type: 'error',
-        message: backendErrors.length > 0 ? backendErrors.join(', ') : message
-      });
+      toast.error(
+        backendErrors.length > 0
+          ? backendErrors.join(', ')
+          : message
+      );
     } finally {
       setLoading(false);
     }
@@ -72,11 +71,10 @@ const Login = () => {
     <div className="form-container">
       <h2>Login</h2>
 
-      <Alert type={alert.type} message={alert.message} />
 
       <form onSubmit={handleSubmit}>
         <FormInput
-          type="email"
+          type="text"
           placeholder="Email"
           value={email}
           onChange={(e) => handleChange('email', e.target.value, setEmail)}

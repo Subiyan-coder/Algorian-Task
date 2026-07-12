@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import CreateTask from '../components/CreateTask';
 import TaskList from '../components/TaskList';
 import Pagination from '../components/Pagination';
-import Alert from '../components/Alert';
+import { toast } from 'react-toastify';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -17,7 +17,6 @@ const Dashboard = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
-  const [alert, setAlert] = useState({type: '', message: ''});
 
   const fetchTasks = async (pageNum = 1, status = statusFilter, by = sortBy, order = sortOrder) => {
       setLoading(true);
@@ -32,12 +31,10 @@ const Dashboard = () => {
         setPage(data.data.page);
 
       }catch (err) {
-            setAlert({
-                type: 'error',
-                message:
-                    err.response?.data?.message ||
-                    'Unable to load Users.'
-            });
+            toast.error(
+              err.response?.data?.message ||
+              'Unable to load tasks.'
+            );
       } finally {
         setLoading(false);
       }
@@ -49,12 +46,10 @@ const Dashboard = () => {
       const { data } = await api.get(`/users?role=${targetRole}`);
       setAssignees(data.data);
     } catch (err) {
-    setAlert({
-        type: 'error',
-        message:
-            err.response?.data?.message ||
-            'Unable to load tasks.'
-      });
+      toast.error(
+        err.response?.data?.message ||
+        'Unable to load tasks.'
+      );
     }
   };
 
@@ -75,8 +70,13 @@ const Dashboard = () => {
 
   return (
     <div className="page-container">
-      <h2>Welcome, {user.name}</h2>
-      <h3>My Tasks</h3>
+
+        <div className="dashboard-header">
+          <div>
+            <h2>Welcome, {user.name}</h2>
+            <p>Assignment Tracker Dashboard</p>
+          </div>
+        </div>
 
       <div className="filter-sort-bar">
         <select
@@ -102,11 +102,6 @@ const Dashboard = () => {
           </button>
         )}
       </div>
-
-      <Alert
-          type={alert.type}
-          message={alert.message}
-      />
 
       <CreateTask assignees={assignees} onTaskCreated={() => fetchTasks(1)} />
 

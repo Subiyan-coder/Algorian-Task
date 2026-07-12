@@ -1,4 +1,5 @@
 import {Routes, Route, Navigate} from 'react-router-dom'
+import { ToastContainer } from 'react-toastify';
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
@@ -10,6 +11,16 @@ function App() {
         <>
 
             <Navbar />
+            <ToastContainer
+                position="top-right"
+                autoClose={2500}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+                draggable
+                theme="colored"
+            />
             <Routes>
                 <Route path='/' element={<Navigate to='/login' replace /> } />
                 <Route path='/login' element={<Login />} />

@@ -2,32 +2,23 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import EditTask from './EditTask';
 import api from '../api/axios';
-import Alert from './Alert';
+import { toast } from 'react-toastify';
 
 const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
   const { user } = useAuth();
   const [editingTaskId, setEditingTaskId] = useState(null);
-  const [alert, setAlert] = useState({
-    type:'',
-    message:''
-  });
 
   const handleDelete = async (taskId) => {
     if (!window.confirm('Delete this task?')) return;
     try {
         await api.delete(`/tasks/${taskId}`);
         onTaskUpdated();
-      setAlert({
-        type:'success',
-        message:'Task deleted successfully.'
-    });
+        toast.success('Task deleted successfully!');
     } catch (err) {
-    setAlert({
-        type:'error',
-        message:
-            err.response?.data?.message ||
-            'Unable to delete task.'
-      });
+    toast.error(
+      err.response?.data?.message ||
+      'Unable to delete task.'
+    );
     }
   };
 
@@ -38,7 +29,6 @@ const TaskList = ({ tasks, onTaskUpdated, sortBy, sortOrder, onSort }) => {
 
   return (
     <>
-      <Alert type={alert.type} message={alert.message} />
       <table className="task-table">
         <thead>
           <tr>

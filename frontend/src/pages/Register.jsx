@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
+import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { registerSchema, getZodErrors } from '../utils/validationSchemas';
 import FormInput from '../components/FormInput';
 import PasswordInput from '../components/PasswordInput';
-import Alert from '../components/Alert';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -16,7 +16,6 @@ const Register = () => {
     name: false, email: false, contact: false, password: false
   });
   const [errors, setErrors] = useState({});
-  const [alert, setAlert] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
@@ -42,7 +41,6 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setAlert({ type: '', message: '' });
     setTouched({ name: true, email: true, contact: true, password: true });
 
     const result = registerSchema.safeParse({ name, email, contact, password });
@@ -55,15 +53,16 @@ const Register = () => {
     try {
       const { data } = await api.post('/auth/register', { name, email, contact, password });
       login(data.data);
-      setAlert({ type: 'success', message: 'Account created successfully! Redirecting...' });
+      toast.success('Account created successfully!');
       setTimeout(() => navigate('/tasks'), 1000);
     } catch (err) {
-      const message = err.response?.data?.message || 'Registration failed';
+      const message = err.response?.data?.message || 'Unable to create your account.';
       const backendErrors = err.response?.data?.errors || [];
-      setAlert({
-        type: 'error',
-        message: backendErrors.length > 0 ? backendErrors.join(', ') : message
-      });
+      toast.error(
+        backendErrors.length > 0
+          ? backendErrors.join(', ')
+          : message
+      );
     } finally {
       setLoading(false);
     }
@@ -73,7 +72,6 @@ const Register = () => {
     <div className="form-container">
       <h2>Register</h2>
 
-      <Alert type={alert.type} message={alert.message} />
 
       <form onSubmit={handleSubmit}>
         <FormInput
@@ -85,7 +83,7 @@ const Register = () => {
         />
 
         <FormInput
-          type="email"
+          type="text"
           placeholder="Email"
           value={email}
           onChange={(e) => handleChange('email', e.target.value, setEmail)}

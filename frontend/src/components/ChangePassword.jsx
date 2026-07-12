@@ -71,11 +71,11 @@ const ChangePassword = ({ onClose }) => {
 
       login(data.data);
 
-      setAlert({ type: 'success', message: 'Password changed successfully' });
+      setAlert({ type: 'success', message: 'Password changed successfully.' });
       setTimeout(() => onClose(), 1500);
 
     } catch (err) {
-      const message = err.response?.data?.message || 'Failed to change password';
+      const message = err.response?.data?.message || 'Unable to change password.';
       setAlert({ type: 'error', message });
     } finally {
       setLoading(false);
