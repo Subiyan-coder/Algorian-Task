@@ -8,7 +8,17 @@ const userSchema = new mongoose.Schema(
     contact: { type: String, required: true, trim: true},
     password: { type: String, required: true },
     role: { type: String, enum: ['admin', 'staff'], default: 'staff'},
-    passwordChangedAt: { type: Date, default: null}
+    passwordChangedAt: { type: Date, default: null},
+    profileImage: {
+        public_id: {
+            type: String,
+            default: ''
+        },
+        url: {
+            type: String,
+            default: ''
+        }
+    }
     },
     { timestamps: true}
 );

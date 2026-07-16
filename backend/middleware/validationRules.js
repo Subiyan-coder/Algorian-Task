@@ -34,6 +34,19 @@ const loginRules = [
     .notEmpty().withMessage('Password is required')
 ];
 
+const updateProfileRules = [
+  body('name')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 }).withMessage('Name must be between 2 and 50 characters')
+    .matches(/^[a-zA-Z\s]+$/).withMessage('Name must not contain special characters or numbers'),
+
+  body('contact')
+    .optional()
+    .trim()
+    .matches(/^[0-9]{10}$/).withMessage('Contact must be a valid 10-digit number')
+];
+
 const createTaskRules = [
   body('title')
     .trim()
@@ -74,4 +87,4 @@ const updateTaskRules = [
     .isLength({ max: 300 }).withMessage('Remarks cannot exceed 300 characters')
 ];
 
-module.exports = { registerRules, loginRules, createTaskRules, updateTaskRules };
+module.exports = { registerRules, loginRules, updateProfileRules, createTaskRules, updateTaskRules };
