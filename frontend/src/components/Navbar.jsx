@@ -31,10 +31,22 @@ const Navbar = () => {
         <div className="nav-links">
           {user ? (
             <>
-              <span className="welcome">
-                {user.name} <small>({user.role})</small>
-              </span>
+              <div className="navbar-user">
+                <img
+                  src={
+                    user.profileImage?.url ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`
+                  }
+                  alt={user.name}
+                  className="navbar-avatar"
+                />
+
+                <span className="welcome">
+                  {user.name} <small>({user.role})</small>
+                </span>
+              </div>
               <Link to="/tasks">Tasks</Link>
+              <Link to="/profile">Profile</Link>
               <button
                 className="btn-password"
                 onClick={() => setShowChangePassword(true)}

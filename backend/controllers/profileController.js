@@ -30,6 +30,8 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
   try {
+        console.log('File:', req.file);
+        console.log('User:', req.user._id);
     const { name, contact } = req.body;
 
     const user = await User.findById(req.user._id);
@@ -85,6 +87,22 @@ const uploadProfileImage = async (req, res, next) => {
         'User not found'
       );
     }
+
+const result = await new Promise((resolve, reject) => {
+  const uploadStream = cloudinary.uploader.upload_stream(
+    {
+      folder: process.env.CLOUDINARY_FOLDER
+    },
+    (error, result) => {
+      if (error) return reject(error);
+      resolve(result);
+    }
+  );
+
+  streamifier
+    .createReadStream(req.file.buffer)
+    .pipe(uploadStream);
+});
 
 const oldPublicId = user.profileImage?.public_id;
 

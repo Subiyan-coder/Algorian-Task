@@ -21,6 +21,7 @@ const sendTokenResponse = (user, statusCode, res, message) => {
     email: user.email,
     role: user.role,
     contact: user.contact,
+    profileImage: user.profileImage,
     accessToken
   }, message);
 };
