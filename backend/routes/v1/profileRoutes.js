@@ -6,22 +6,8 @@ const { validate } = require('../../middleware/validateMiddleware');
 const { updateProfileRules } = require('../../middleware/validationRules');
 
 const router = express.Router();
-
 router.get('/', protect, getProfile);
-
-router.put(
-  '/',
-  protect,
-  updateProfileRules,
-  validate,
-  updateProfile
-);
-
-router.put(
-  '/image',
-  protect,
-  upload.single('profileImage'),
-  uploadProfileImage
-);
+router.put('/',protect, updateProfileRules, validate, updateProfile);
+router.put('/image', protect, upload.single('profileImage'), uploadProfileImage);
 
 module.exports = router;

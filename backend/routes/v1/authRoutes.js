@@ -1,15 +1,20 @@
 const express = require('express');
-const { register, login, refreshToken, logout, changePassword } = require('../../controllers/authController');
+const { register, login, refreshToken, logout } = require('../../controllers/authController');
+const { changePassword, forgotPassword, verifyOtp, resetPassword } = require('../../controllers/passwordController');
 const { protect } = require('../../middleware/authMiddleware');
 const { validate } = require('../../middleware/validateMiddleware');
 const { registerRules, loginRules } = require('../../middleware/validationRules');
+const { loginLimiter, registerLimiter, passwordResetLimiter } = require('../../middleware/rateLimitMiddleware');
 
 const router = express.Router();
 
-router.post('/register', registerRules, validate, register);
-router.post('/login', loginRules, validate, login);
+router.post('/register', registerLimiter, registerRules, validate, register);
+router.post('/login', loginLimiter, loginRules, validate, login);
 router.post('/refresh', refreshToken);
 router.post('/logout', logout);
 router.put('/change-password', protect, changePassword);
+router.post('/forgot-password', passwordResetLimiter, forgotPassword);
+router.post('/verify-otp', passwordResetLimiter, verifyOtp);
+router.put('/reset-password', passwordResetLimiter, resetPassword);
 
 module.exports = router;

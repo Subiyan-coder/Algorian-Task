@@ -13,4 +13,14 @@ const generateRefreshToken = (id) => {
   });
 };
 
-module.exports = { generateAccessToken, generateRefreshToken };
+const generateResetToken = (userId) => {
+    return jwt.sign(
+        { id: userId },
+        process.env.JWT_RESET_SECRET,
+        {
+            expiresIn: process.env.JWT_RESET_EXPIRE
+        }
+    );
+};
+
+module.exports = { generateAccessToken, generateRefreshToken, generateResetToken };

@@ -9,6 +9,14 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     role: { type: String, enum: ['admin', 'staff'], default: 'staff'},
     passwordChangedAt: { type: Date, default: null},
+    passwordResetOtp: {
+        type: String,
+        default: ''
+    },
+    passwordResetOtpExpires: {
+        type: Date,
+        default: null
+    },
     profileImage: {
         public_id: {
             type: String,
