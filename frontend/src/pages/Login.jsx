@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { loginSchema, getZodErrors } from '../utils/validationSchemas';
 import FormInput from '../components/FormInput';
+import PasswordInput from '../components/PasswordInput'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -81,13 +82,12 @@ const Login = () => {
           touched={touched.email}
         />
 
-        <FormInput
-          type="password"
-          placeholder="Password"
+        <PasswordInput 
           value={password}
           onChange={(e) => handleChange('password', e.target.value, setPassword)}
           error={errors.password}
           touched={touched.password}
+          showRequirements={false}
         />
 
         <p style={{ textAlign: 'right', marginBottom: '1rem' }}>

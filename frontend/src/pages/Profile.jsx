@@ -15,7 +15,8 @@ const Profile = () => {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+
   const { updateUser } = useAuth();
 
   const fetchProfile = async () => {
@@ -241,19 +242,22 @@ const handleImageUpload = async () => {
 
                      <hr className="profile-divider" />
 
-                      <button
-                          className="btn-danger"
-                          onClick={() => setShowChangePassword(true)}
-                      >
-                          🔒 Change Password
-                      </button>
-                    </div>
+                      {!showPasswordForm ? (
+                          <button
+                              className="btn-danger"
+                              onClick={() => setShowPasswordForm(true)}
+                          >
+                              🔒 Change Password
+                          </button>
+                      ) : (
+                          <div className="password-section">
+                              <ChangePassword
+                                  onCancel={() => setShowPasswordForm(false)}
+                              />
+                          </div>
+                      )}
 
-                    {showChangePassword && (
-                        <ChangePassword
-                            onClose={() => setShowChangePassword(false)}
-                        />
-                    )}
+                    </div>
 
                 </>
                 )}

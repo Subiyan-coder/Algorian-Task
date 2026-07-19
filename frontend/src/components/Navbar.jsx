@@ -1,15 +1,10 @@
-import { useState } from 'react';
 import { Link, useNavigate, useLocation  } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import ChangePassword from './ChangePassword';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [showChangePassword, setShowChangePassword] = useState(false);
-
   const hideNavbar =
     location.pathname === "/login" ||
     location.pathname === "/register";
@@ -47,12 +42,7 @@ const Navbar = () => {
               </div>
               <Link to="/tasks">Tasks</Link>
               <Link to="/profile">Profile</Link>
-              <button
-                className="btn-password"
-                onClick={() => setShowChangePassword(true)}
-              >
-                Change Password
-              </button>
+
               <button className="btn-danger" onClick={handleLogout}>
                 Logout
               </button>
@@ -65,10 +55,6 @@ const Navbar = () => {
           )}
         </div>
       </nav>
-
-      {showChangePassword && (
-        <ChangePassword onClose={() => setShowChangePassword(false)} />
-      )}
     </>
   );
 };

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
 const requirements = [
   { id: 'length', label: 'At least 6 characters', test: (v) => v.length >= 6 },
@@ -15,8 +16,9 @@ const getProgressColor = (strength) => {
   return '#16a34a';
 };
 
-const PasswordInput = ({ value, onChange, error, touched, placeholder = 'Password' }) => {
+const PasswordInput = ({ value, onChange, error, touched, placeholder = 'Password', showRequirements = true }) => {
   const [focused, setFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const metRequirements = requirements.filter(r => r.test(value));
   const strength = metRequirements.length;
@@ -28,19 +30,37 @@ const PasswordInput = ({ value, onChange, error, touched, placeholder = 'Passwor
   };
 
   return (
-    <div className="input-wrapper">
-      <input
-        type="password"
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        className={getInputClass()}
-      />
-      {touched && error && <p className="field-error">{error}</p>}
 
-      {(focused || value.length > 0) && (
+    <div className="input-wrapper">
+
+      <div className="password-input-container">
+
+        <input
+
+          className={`form-input ${getInputClass()}`}
+          type={showPassword ? "text" : "password"}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+
+        />
+
+        <button
+          type="button"
+          className="password-toggle"
+          onClick={() => setShowPassword(prev => !prev)}
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
+        >
+          {showPassword ? <EyeOff  size={18} strokeWidth={2} /> : <Eye  size={18} strokeWidth={2} />}
+        </button>
+
+      </div>
+
+        {touched && error && <p className="field-error">{error}</p>}
+
+      {showRequirements && (focused || value.length > 0) && (
         <div className="password-requirements">
           <div className="password-progress">
             <div

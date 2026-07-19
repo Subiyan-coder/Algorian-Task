@@ -3,21 +3,10 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import PasswordInput from './PasswordInput';
 import Alert from './Alert';
-import { z } from 'zod';
-import { getZodErrors } from '../utils/validationSchemas';
+import { getZodErrors, changePasswordSchema } from '../utils/validationSchemas';
 
-const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required'),
-  newPassword: z
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain uppercase, lowercase and a number'
-    )
-});
 
-const ChangePassword = ({ onClose }) => {
+const ChangePassword = ({onCancel }) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [touched, setTouched] = useState({
@@ -72,7 +61,15 @@ const ChangePassword = ({ onClose }) => {
       login(data.data);
 
       setAlert({ type: 'success', message: 'Password changed successfully.' });
-      setTimeout(() => onClose(), 1500);
+      setCurrentPassword('');
+      setNewPassword('');
+
+      setTouched({
+          currentPassword:false,
+          newPassword:false
+      });
+
+      setErrors({});
 
     } catch (err) {
       const message = err.response?.data?.message || 'Unable to change password.';
@@ -83,11 +80,12 @@ const ChangePassword = ({ onClose }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h3>Change Password</h3>
-          <button className="modal-close" onClick={onClose}>✕</button>
+
+    <div className="password-card" >
+        
+        <div className="password-header">
+            <h3>Change Password</h3>
+            <p>Update your account password.</p>
         </div>
 
         <Alert type={alert.type} message={alert.message} />
@@ -109,16 +107,22 @@ const ChangePassword = ({ onClose }) => {
             touched={touched.newPassword}
           />
 
-          <div className="modal-actions">
-            <button type="button" className="btn-secondary" onClick={onClose}>
-              Cancel
-            </button>
+          <div className="password-actions">
+
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading ? 'Changing...' : 'Change Password'}
             </button>
+
+            <button
+                type="button"
+                className="btn-secondary"
+                onClick={onCancel}
+            >
+                Cancel
+            </button>
+
           </div>
         </form>
-      </div>
     </div>
   );
 };

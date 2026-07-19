@@ -70,6 +70,17 @@ export const resetPasswordSchema = z.object({
   path: ['confirmPassword']
 });
 
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      'Password must contain uppercase, lowercase and a number'
+    )
+});
+
 export const createTaskSchema = z.object({
   title: z
     .string()
