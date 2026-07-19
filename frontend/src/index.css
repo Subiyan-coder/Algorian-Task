@@ -103,15 +103,6 @@ button:disabled {
   color: #fff;
 }
 
-.btn-password {
-  background-color: #f59e0b;
-  color: #fff;
-}
-
-.btn-password:hover {
-  background-color: #d97706;
-}
-
 .btn-secondary {
   background-color: #9ca3af;
   color: #fff;
@@ -411,14 +402,6 @@ button:disabled {
     margin-right:10px;
 }
 
-/* ─── Error message ───────────────────────────────── */
-
-.error {
-  color: #ef4444;
-  font-size: 0.875rem;
-  margin-bottom: 8px;
-}
-
 /* ─── Pagination ──────────────────────────────────── */
 
 .pagination {
@@ -714,15 +697,16 @@ select.invalid:focus {
 }
 
 .profile-actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 22px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 22px;
 }
 
 .profile-actions button {
-  min-width: 140px;
+    min-width: 140px;
 }
+
 
 .profile-upload {
   margin: 20px 0;
@@ -761,13 +745,34 @@ select.invalid:focus {
     background:#1d4ed8;
 }
 
-.profile-actions{
-    display:flex;
-    justify-content:center;
-    gap:12px;
-    margin-top:15px;
+/* -------OTP------------------ */
+
+.otp-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 10px;
 }
 
-.profile-actions button{
-    width:120px;
+.otp-input {
+    width: 50px;
+    height: 55px;
+    text-align: center;
+    font-size: 1.4rem;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.otp-input:focus {
+    border-color: #4f46e5;
+}
+
+.otp-input.valid {
+    border-color: #16a34a;
+}
+
+.otp-input.invalid {
+    border-color: #dc2626;
 }

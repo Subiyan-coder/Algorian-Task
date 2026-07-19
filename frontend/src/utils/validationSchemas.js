@@ -39,6 +39,37 @@ export const loginSchema = z.object({
     .min(1, 'Password is required')
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .trim()
+    .email('Please enter a valid email address')
+});
+
+export const verifyOtpSchema = z.object({
+  otp: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'OTP must be exactly 6 digits')
+});
+
+export const resetPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+    ),
+
+  confirmPassword: z
+    .string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword']
+});
+
 export const createTaskSchema = z.object({
   title: z
     .string()

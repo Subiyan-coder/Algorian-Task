@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { toast } from 'react-toastify';
 import FormInput from '../components/FormInput';
 import { useAuth } from '../context/AuthContext';
+import ChangePassword from '../components/ChangePassword';
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -13,6 +14,7 @@ const Profile = () => {
   const [preview, setPreview] = useState('');
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showChangePassword, setShowChangePassword] = useState(false);
   
   const { updateUser } = useAuth();
 
@@ -226,6 +228,22 @@ const handleImageUpload = async () => {
                     >
                     Edit Profile
                     </button>
+
+                    <hr className="profile-divider" />
+
+                    <button
+                        className="btn-danger"
+                        onClick={() => setShowChangePassword(true)}
+                    >
+                        🔒 Change Password
+                    </button>
+
+                    {showChangePassword && (
+                        <ChangePassword
+                            onClose={() => setShowChangePassword(false)}
+                        />
+                    )}
+                    
                 </>
                 )}
 

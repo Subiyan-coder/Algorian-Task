@@ -90,6 +90,12 @@ const Login = () => {
           touched={touched.password}
         />
 
+        <p style={{ textAlign: 'right', marginBottom: '1rem' }}>
+          <Link to="/forgot-password">
+            Forgot Password?
+          </Link>
+        </p>
+
         <button type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </button>
