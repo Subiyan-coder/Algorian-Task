@@ -160,17 +160,26 @@ const handleImageUpload = async () => {
                 </>
                 ) : (
                 <>
+
                     <h2>{profile.name}</h2>
 
-                    <p>{profile.email}</p>
-
-                    <p>
-                    <strong>Contact:</strong> {profile.contact}
+                    <p className="profile-email">
+                        {profile.email}
                     </p>
 
-                    <p>
-                    <strong>Role:</strong> {profile.role}
-                    </p>
+                    <div className="profile-info">
+
+                        <div className="profile-info-row">
+                            <span>Contact</span>
+                            <span>{profile.contact || "-"}</span>
+                        </div>
+
+                        <div className="profile-info-row">
+                            <span>Role</span>
+                            <span>{profile.role}</span>
+                        </div>
+
+                    </div>
 
                     <div className="profile-upload">
 
@@ -221,29 +230,31 @@ const handleImageUpload = async () => {
                         )}
 
                     </div>
+                    
+                    <div className="profile-section">
+                      <button
+                      className="btn-primary"
+                      onClick={() => setEditing(true)}
+                      >
+                      Edit Profile
+                      </button>
 
-                    <button
-                    className="btn-primary"
-                    onClick={() => setEditing(true)}
-                    >
-                    Edit Profile
-                    </button>
+                     <hr className="profile-divider" />
 
-                    <hr className="profile-divider" />
-
-                    <button
-                        className="btn-danger"
-                        onClick={() => setShowChangePassword(true)}
-                    >
-                        🔒 Change Password
-                    </button>
+                      <button
+                          className="btn-danger"
+                          onClick={() => setShowChangePassword(true)}
+                      >
+                          🔒 Change Password
+                      </button>
+                    </div>
 
                     {showChangePassword && (
                         <ChangePassword
                             onClose={() => setShowChangePassword(false)}
                         />
                     )}
-                    
+
                 </>
                 )}
 
