@@ -1,4 +1,5 @@
 const { errorResponse } = require('../utils/apiResponse');
+const { logEvent } = require("../utils/loggerHelper");
 
 const errorHandlers = {
   ValidationError: (err, res) => {
@@ -25,16 +26,28 @@ const handleDuplicateKeyError = (err, res) => {
 };
 
 const globalErrorHandler = (err, req, res, next) => {
-  console.error(`[ERROR] ${err.name}: ${err.message}`);
 
-  if (err.code === 11000) {
+    if (err.code === 11000) {
     return handleDuplicateKeyError(err, res);
   }
 
   const handler = errorHandlers[err.name];
+
   if (handler) {
     return handler(err, res);
   }
+
+  logEvent({
+      type: "error",
+      level: "error",
+      event: err.name,
+      req,
+      details: {
+          message: err.message,
+          path: req.originalUrl,
+          method: req.method
+      }
+  });
 
   return errorResponse(
     res,

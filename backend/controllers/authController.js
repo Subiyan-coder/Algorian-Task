@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { successResponse, errorResponse, checkRequiredFields } = require('../utils/apiResponse');
 const sendTokenResponse = require('../utils/sendTokenResponse');
 const { generateAccessToken } = require('../utils/generateToken');
+const { logEvent } = require("../utils/loggerHelper");
 
 const register = async (req, res, next) => {
     try {
@@ -28,6 +29,13 @@ const register = async (req, res, next) => {
             role : 'staff'
         });
 
+        logEvent({
+            type: "auth",
+            event: "User Registered",
+            user,
+            req
+        });
+
         return sendTokenResponse(user, 201, res, 'User registered successfully');
     } catch (err) {
         next(err);
@@ -43,6 +51,13 @@ const login = async (req, res, next) => {
         if (!user || !(await user.matchPassword(password))) {
             return errorResponse(res, 401, 'Invalid email or password', []);
           }
+
+        logEvent({
+            type: "auth",
+            event: "User Logged In",
+            user,
+            req
+        });
 
             return sendTokenResponse(user, 200, res, 'Login successful');
         } catch (err) {
@@ -67,6 +82,13 @@ const refreshToken = async (req, res, next) => {
 
     const newAccessToken = generateAccessToken(user._id, user.role);
 
+    logEvent({
+        type: "auth",
+        event: "Access Token Refreshed",
+        user,
+        req
+    });
+
     return successResponse(res, 200, {
       accessToken: newAccessToken
     }, 'Token refreshed successfully');
@@ -80,12 +102,20 @@ const refreshToken = async (req, res, next) => {
 };
 
 const logout = async (req, res) => {
+  
   res.cookie('refreshToken', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     expires: new Date(0)
   });
+
+  logEvent({
+      type: "auth",
+      event: "User Logged Out",
+      req
+  });
+
   return successResponse(res, 200, null, 'Logged out successfully');
 };
 

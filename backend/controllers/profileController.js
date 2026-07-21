@@ -3,6 +3,7 @@ const cloudinary = require('../config/cloudinary');
 const { StatusCodes } = require('http-status-codes');
 const streamifier = require('streamifier');
 const { successResponse, errorResponse } = require('../utils/apiResponse');
+const { logEvent } = require("../utils/loggerHelper");
 
 const getProfile = async (req, res, next) => {
   try {
@@ -30,8 +31,7 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
   try {
-        console.log('File:', req.file);
-        console.log('User:', req.user._id);
+      
     const { name, contact } = req.body;
 
     const user = await User.findById(req.user._id);
@@ -48,6 +48,17 @@ const updateProfile = async (req, res, next) => {
     user.contact = contact ?? user.contact;
 
     await user.save();
+
+    logEvent({
+        type: "app",
+        event: "Profile Updated",
+        user,
+        req,
+        details: {
+            nameUpdated: name !== undefined,
+            contactUpdated: contact !== undefined
+        }
+    });
 
     return successResponse(
       res,
@@ -113,11 +124,28 @@ const oldPublicId = user.profileImage?.public_id;
 
     await user.save();
 
+    logEvent({
+        type: "app",
+        event: "Profile Image Updated",
+        user,
+        req
+    });
+
     if (oldPublicId) {
     try {
         await cloudinary.uploader.destroy(oldPublicId);
     } catch (error) {
-        console.error('Failed to delete old image:', error.message);
+        logEvent({
+            type: "error",
+            level: "warn",
+            event: "Old Profile Image Deletion Failed",
+            user,
+            req,
+            details: {
+                publicId: oldPublicId,
+                message: error.message
+            }
+        });
     }
     }
 

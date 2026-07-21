@@ -6,6 +6,7 @@ const { generateResetToken } = require('../utils/generateToken');
 const { generateOtp, hashOtp } = require('../utils/otp');
 const sendEmail = require('../utils/sendEmail');
 const sendTokenResponse = require('../utils/sendTokenResponse');
+const { logEvent } = require("../utils/loggerHelper");
 
 const changePassword = async (req, res, next) => {
   try {
@@ -34,6 +35,13 @@ const changePassword = async (req, res, next) => {
 
     user.password = newPassword;
     await user.save(); 
+
+    logEvent({
+        type: "auth",
+        event: "Password Changed",
+        user,
+        req
+    });
 
     return sendTokenResponse(user, 200, res, 'Password changed successfully');
   } catch (err) {
@@ -75,6 +83,13 @@ const forgotPassword = async (req, res, next) => {
                 <p>This OTP expires in 5 minutes.</p>
             `
         );
+
+        logEvent({
+            type: "auth",
+            event: "Password Reset OTP Sent",
+            user,
+            req
+        });
 
         return successResponse(
             res,
@@ -120,6 +135,13 @@ const verifyOtp = async (req, res, next) => {
         user.passwordResetOtpExpires = null;
 
         await user.save();
+
+        logEvent({
+            type: "auth",
+            event: "Password Reset OTP Verified",
+            user,
+            req
+        });
 
         const resetToken = generateResetToken(user._id);
 
@@ -173,6 +195,13 @@ const resetPassword = async (req, res, next) => {
         user.password = newPassword;
 
         await user.save();
+
+        logEvent({
+            type: "auth",
+            event: "Password Reset Completed",
+            user,
+            req
+        });
 
         return successResponse(
             res,

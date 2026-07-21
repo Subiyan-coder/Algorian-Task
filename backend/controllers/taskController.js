@@ -1,6 +1,7 @@
 const Task = require('../models/Task');
 const User = require('../models/user');
 const { successResponse, errorResponse, checkRequiredFields } = require('../utils/apiResponse');
+const { logEvent } = require("../utils/loggerHelper")
 
 const createTask = async (req, res, next) => {
     try {
@@ -28,6 +29,19 @@ const createTask = async (req, res, next) => {
             assignedTo,
             createdBy: req.user._id
         });
+
+        logEvent({
+            type: "app",
+            event: "Task Created",
+            user: req.user,
+            req,
+            details: {
+                taskId: task._id,
+                title: task.title,
+                assignedTo: assignee.email
+            }
+        });
+
         return successResponse(res, 201, task, 'Task created successfully')
     } catch(err) {
         next(err);
@@ -152,6 +166,18 @@ const updateTask = async (req, res, next) => {
         }
 
         const updated = await task.save();
+
+        logEvent({
+            type: "app",
+            event: "Task Updated",
+            user: req.user,
+            req,
+            details: {
+                taskId: task._id,
+                status: task.status
+            }
+        });
+
         return successResponse (res, 200, updated, 'Task updated successfully' );
 
     } catch(err) {
@@ -173,7 +199,21 @@ const deleteTask = async (req, res, next) => {
             return errorResponse(res, 403, 'Only the creator of this task can delete it');
         }
 
+        const taskDetails = {
+            taskId: task._id,
+            title: task.title
+        };
+
         await task.deleteOne();
+
+        logEvent({
+            type: "app",
+            event: "Task Deleted",
+            user: req.user,
+            req,
+            details: taskDetails
+        });
+
         return successResponse(res, 200, null, 'Task deleted successfully');
     } catch(err) {
         next(err);
