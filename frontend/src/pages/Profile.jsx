@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Camera, Upload, LoaderCircle } from "lucide-react";
 import api from '../api/axios';
 import { toast } from 'react-toastify';
 import FormInput from '../components/FormInput';
@@ -14,8 +15,9 @@ const Profile = () => {
   const [preview, setPreview] = useState('');
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showChangePassword, setShowChangePassword] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+
+  const fileInputRef = useRef(null);
 
   const { updateUser } = useAuth();
 
@@ -185,6 +187,7 @@ const handleImageUpload = async () => {
                     <div className="profile-upload">
 
                         <input
+                            ref={fileInputRef}
                             id="profileImage"
                             type="file"
                             accept=".jpg,.jpeg,.png"
@@ -199,26 +202,44 @@ const handleImageUpload = async () => {
                             }}
                         />
 
-                        <label
-                            htmlFor="profileImage"
-                            className="btn-secondary upload-label"
+                        <button
+                            className={selectedImage ? "btn-success" : "btn-secondary"}
+                            disabled={uploading}
+                            onClick={() => {
+                                if (selectedImage) {
+                                    handleImageUpload();
+                                } else {
+                                    fileInputRef.current.click();
+                                }
+                            }}
                         >
-                            📷 Change Photo
-                        </label>
+                            {uploading ? (
+                                <>
+                                    <LoaderCircle
+                                        size={18}
+                                        className="spinner"
+                                    />
+                                    Uploading...
+                                </>
+                            ) : selectedImage ? (
+                                <>
+                                    <Upload size={18} />
+                                    Upload Photo
+                                </>
+                            ) : (
+                                <>
+                                    <Camera size={18} />
+                                    Change Photo
+                                </>
+                            )}
+                        </button>
 
                         {selectedImage && (
                             <div className="profile-actions">
 
                                 <button
-                                    className="btn-primary"
                                     disabled={uploading}
-                                    onClick={handleImageUpload}
-                                >
-                                    {uploading ? 'Uploading...' : 'Upload'}
-                                </button>
-
-                                <button
-                                    className="btn-secondary"
+                                    className="btn-cancel"
                                     onClick={() => {
                                         setSelectedImage(null);
                                         setPreview('');

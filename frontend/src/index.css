@@ -108,9 +108,87 @@ button:disabled {
   color: #fff;
 }
 
+.btn-primary,
+.btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.spinner {
+    animation: spin 0.8s linear infinite;
+    color: white;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .navbar .btn-logout {
   background-color: #ef4444;
   color: #fff;
+}
+
+.btn-success {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    width: 100%;
+
+    background-color: #22c55e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+
+    padding: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: #16a34a;
+}
+
+.btn-success:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    width: 100%;
+
+    background-color: #4b5563;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-cancel:hover:not(:disabled) {
+    background-color: #374151;
+}
+
+.btn-cancel:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 /* ─── Page container ──────────────────────────────── */
