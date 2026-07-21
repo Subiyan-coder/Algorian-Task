@@ -136,7 +136,7 @@ const oldPublicId = user.profileImage?.public_id;
         await cloudinary.uploader.destroy(oldPublicId);
     } catch (error) {
         logEvent({
-            type: "error",
+            type: "app",
             level: "warn",
             event: "Old Profile Image Deletion Failed",
             user,
@@ -159,11 +159,7 @@ const oldPublicId = user.profileImage?.public_id;
     );
 
   } catch (err) {
-        return errorResponse(
-            res,
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            err.message || 'Image upload failed'
-        );
+        next(err);
     }
 };
 

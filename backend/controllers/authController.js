@@ -49,6 +49,17 @@ const login = async (req, res, next) => {
         const user = await User.findOne({ email });
         
         if (!user || !(await user.matchPassword(password))) {
+
+            logEvent({
+                type: "auth",
+                level: "warn",
+                event: "Failed Login",
+                req,
+                details: {
+                    email
+                }
+            });
+
             return errorResponse(res, 401, 'Invalid email or password', []);
           }
 
