@@ -26,8 +26,10 @@ const createTask = async (req, res, next) => {
         const task = await Task.create({
             title,
             description,
+            createdBy: req.user._id,
+            createdByName: req.user.name,
             assignedTo,
-            createdBy: req.user._id
+            assignedToName: assignee.name
         });
 
         logEvent({
@@ -82,34 +84,67 @@ const getTask = async (req, res, next) => {
     const pipeline = [
       { $match: matchFilter },
 
-      { $lookup: {
-        from: 'users',
-        localField: 'createdBy',
-        foreignField: '_id',
-        as: 'createdByData'
-      }},
-      { $unwind: '$createdByData' },
-
-      { $lookup: {
-        from: 'users',
-        localField: 'assignedTo',
-        foreignField: '_id',
-        as: 'assignedToData'
-      }},
-      { $unwind: '$assignedToData' },
-
-      { $addFields: {
-        createdBy: {
-          _id: '$createdByData._id',
-          name: '$createdByData.name',
-          email: '$createdByData.email'
-        },
-        assignedTo: {
-          _id: '$assignedToData._id',
-          name: '$assignedToData.name',
-          email: '$assignedToData.email'
+      { 
+        $lookup: {
+          from: "users",
+          localField: "createdBy",
+          foreignField: "_id",
+          as: "createdByData"
         }
-      }},
+      },
+      {
+        $unwind: {
+          path: "$createdByData",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "assignedTo",
+          foreignField: "_id",
+          as: "assignedToData"
+        }
+      },
+      {
+        $unwind: {
+          path: "$assignedToData",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+
+      {
+        $addFields: {
+          createdBy: {
+            _id: "$createdByData._id",
+            name: {
+              $ifNull: [
+                "$createdByData.name",
+                "$createdByName"
+              ]
+            },
+            email: "$createdByData.email",
+            isDeleted: {
+              $eq: ["$createdBy", null]
+            }
+          },
+
+          assignedTo: {
+            _id: "$assignedToData._id",
+            name: {
+              $ifNull: [
+                "$assignedToData.name",
+                "$assignedToName"
+              ]
+            },
+            email: "$assignedToData.email",
+            isDeleted: {
+              $eq: ["$assignedTo", null]
+            }
+          }
+        }
+      },
 
       { $project: {
         createdByData: 0,

@@ -7,7 +7,9 @@ const taskSchema = new mongoose.Schema({
      enum: ['pending', 'in-progress', 'completed', 'unable-to-complete'], default: 'pending' },
   remarks: { type: String, default: '' },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    createdByName: { type: String, required: true },
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    assignedToName: { type: String, required: true }
   },
     { timestamps: true }
 );

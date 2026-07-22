@@ -1,9 +1,11 @@
 const User = require('../models/user');
+const Task = require("../models/Task");
 const cloudinary = require('../config/cloudinary');
 const { StatusCodes } = require('http-status-codes');
 const streamifier = require('streamifier');
 const { successResponse, errorResponse } = require('../utils/apiResponse');
 const { logEvent } = require("../utils/loggerHelper");
+const { clearRefreshToken } = require("../utils/cookies")
 
 const getProfile = async (req, res, next) => {
   try {
@@ -48,6 +50,18 @@ const updateProfile = async (req, res, next) => {
     user.contact = contact ?? user.contact;
 
     await user.save();
+
+    if (name !== undefined) {
+      await Task.updateMany(
+        { createdBy: user._id },
+        { createdByName: user.name }
+      );
+
+      await Task.updateMany(
+        { assignedTo: user._id },
+        { assignedToName: user.name }
+      );
+    }
 
     logEvent({
         type: "app",
@@ -163,4 +177,100 @@ const oldPublicId = user.profileImage?.public_id;
     }
 };
 
-module.exports = { getProfile, updateProfile, uploadProfileImage };
+const deleteAccount = async (req, res, next) => {
+    try {
+        const { password } = req.body;
+
+        if (!password) {
+            return errorResponse(
+                res,
+                400,
+                "Password is required",
+                ["Password is required"]
+            );
+        }
+
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return errorResponse(
+                res,
+                404,
+                "User not found",
+                ["User not found"]
+            );
+        }
+
+        const isMatch = await user.matchPassword(password);
+
+          if (!isMatch) {
+              return errorResponse(
+                  res,
+                  401,
+                  "Incorrect password",
+                  ["Incorrect password"]
+              );
+          }
+
+          if (user.profileImage?.public_id) {
+              try {
+                  await cloudinary.uploader.destroy(user.profileImage.public_id);
+              } catch (err) {
+                  logEvent({
+                      type: "app",
+                      level: "warn",
+                      message: "Failed to delete profile image from Cloudinary",
+                      userId: user._id,
+                      userEmail: user.email,
+                      req
+                  });
+              }
+          }
+
+        await Task.updateMany(
+            { createdBy: user._id },
+            {
+                $set: {
+                    createdBy: null,
+                    createdByName: `${user.name} (Deleted)`
+                }
+            }
+        );
+
+        await Task.updateMany(
+            { assignedTo: user._id },
+            {
+                $set: {
+                    assignedTo: null,
+                    assignedToName: `${user.name} (Deleted)`
+                }
+            }
+        );
+
+        logEvent({
+            type: "auth",
+            level: "info",
+            message: "Account Deleted",
+            userId: user._id,
+            userEmail: user.email,
+            req
+        });
+
+        await user.deleteOne();
+
+        clearRefreshToken(res);
+
+    return successResponse(
+        res,
+        200,
+        null,
+        "Account deleted successfully"
+    );
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+module.exports = { getProfile, updateProfile, uploadProfileImage, deleteAccount };

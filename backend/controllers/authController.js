@@ -4,6 +4,7 @@ const { successResponse, errorResponse, checkRequiredFields } = require('../util
 const sendTokenResponse = require('../utils/sendTokenResponse');
 const { generateAccessToken } = require('../utils/generateToken');
 const { logEvent } = require("../utils/loggerHelper");
+const { clearRefreshToken } = require("../utils/cookies")
 
 const register = async (req, res, next) => {
     try {
@@ -114,12 +115,7 @@ const refreshToken = async (req, res, next) => {
 
 const logout = async (req, res) => {
   
-  res.cookie('refreshToken', '', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    expires: new Date(0)
-  });
+  clearRefreshToken(res);
 
   logEvent({
       type: "auth",
