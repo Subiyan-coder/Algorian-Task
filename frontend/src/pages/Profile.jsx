@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Camera, Upload, LoaderCircle } from "lucide-react";
+import { Camera, Upload, LoaderCircle, Lock, Trash2 } from "lucide-react";
 import api from '../api/axios';
 import { toast } from 'react-toastify';
 import FormInput from '../components/FormInput';
 import { useAuth } from '../context/AuthContext';
 import ChangePassword from '../components/ChangePassword';
+import DeleteAccount from "../components/DeleteAccount";
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -16,6 +17,7 @@ const Profile = () => {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -263,13 +265,15 @@ const handleImageUpload = async () => {
 
                      <hr className="profile-divider" />
 
+                     <h3 className="profile-section-title">
+                         Account & Security 
+                    </h3>
+
                       {!showPasswordForm ? (
-                          <button
-                              className="btn-danger"
-                              onClick={() => setShowPasswordForm(true)}
-                          >
-                              🔒 Change Password
-                          </button>
+                        <button className="btn-secondary">
+                            <Lock size={18} />
+                            <span>Change Password</span>
+                        </button>
                       ) : (
                           <div className="password-section">
                               <ChangePassword
@@ -277,6 +281,19 @@ const handleImageUpload = async () => {
                               />
                           </div>
                       )}
+
+                        <hr className="profile-divider" />
+
+                            {!showDeleteAccount ? (
+                                <button className="btn-danger">
+                                    <Trash2 size={18} />
+                                    <span>Delete Account</span>
+                                </button>
+                            ) : (
+                                <DeleteAccount
+                                    onCancel={() => setShowDeleteAccount(false)}
+                                />
+                            )}
 
                     </div>
 

@@ -83,7 +83,7 @@ button{
     transition:all .2s ease;
 }
 
-button:hover{
+button:hover:not(:disabled) {
     transform:translateY(-1px);
     opacity:.95;
 }
@@ -104,12 +104,21 @@ button:disabled {
 }
 
 .btn-secondary {
-  background-color: #9ca3af;
-  color: #fff;
+    width: 100%;
+    background: white;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #eff6ff;
 }
 
 .btn-primary,
-.btn-secondary {
+.btn-secondary,
+.btn-danger,
+.btn-success,
+.btn-cancel {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -138,58 +147,25 @@ button:disabled {
 }
 
 .btn-success {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
     width: 100%;
-
     background-color: #22c55e;
     color: white;
-    border: none;
-    border-radius: 8px;
-
-    padding: 12px;
-    font-weight: 600;
-
-    cursor: pointer;
-    transition: 0.2s;
 }
 
 .btn-success:hover:not(:disabled) {
     background-color: #16a34a;
 }
 
-.btn-success:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
 .btn-cancel {
     width: 100%;
-
     background-color: #4b5563;
     color: white;
-
-    border: none;
-    border-radius: 8px;
-
-    padding: 12px;
-    font-weight: 600;
-
-    cursor: pointer;
-    transition: 0.2s;
 }
 
 .btn-cancel:hover:not(:disabled) {
     background-color: #374151;
 }
 
-.btn-cancel:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
 
 /* ─── Page container ──────────────────────────────── */
 

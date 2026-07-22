@@ -28,20 +28,24 @@ export const AuthProvider = ({children}) => {
             return updatedUser;
         });
     };
-    
-    const logout = async () => {
-    try {
-        await api.post('/auth/logout');
-    } catch (err) {
-        console.error('Logout failed:',err);
-    } finally {
-        localStorage.removeItem('user');
+
+    const clearAuth = () => {
+        localStorage.removeItem("user");
         setUser(null);
-    }
+    };
+    
+   const logout = async () => {
+        try {
+            await api.post('/auth/logout');
+        } catch (err) {
+            console.error('Logout failed:', err);
+        } finally {
+            clearAuth();
+        }
     };
 
 return (
-  <AuthContext.Provider value={{ user, login, logout, updateUser }}>
+  <AuthContext.Provider value={{ user, login, logout, updateUser, clearAuth }}>
     {children}
   </AuthContext.Provider>
 );
