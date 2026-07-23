@@ -1,67 +1,67 @@
 import { z } from 'zod';
 
-export const registerSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(50, 'Name must not exceed 50 characters')
-    .regex(/^[a-zA-Z\s]+$/, 'Name must not contain numbers or special characters'),
+const nameSchema = z
+  .string()
+  .min(2, 'Name must be at least 2 characters')
+  .max(50, 'Name must not exceed 50 characters')
+  .regex(
+    /^[a-zA-Z\s]+$/,
+    'Name must not contain numbers or special characters'
+  );
 
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .trim()
-    .email('Please enter a valid email address'),
+const emailSchema = z
+  .string()
+  .min(1, 'Email is required')
+  .trim()
+  .email('Please enter a valid email address');
 
-  contact: z
-    .string()
-    .trim()
-    .regex(/^[0-9]{10}$/, 'Contact must be exactly 10 digits'),
+const contactSchema = z
+  .string()
+  .trim()
+  .regex(
+    /^[0-9]{10}$/,
+    'Contact must be exactly 10 digits'
+  );
 
-  password: z
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-    )
+const passwordSchema = z
+  .string()
+  .min(6, 'Password must be at least 6 characters')
+  .regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+    'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+  );
+
+const otpSchema = z
+  .string()
+  .trim()
+  .regex(
+    /^\d{6}$/,
+    'OTP must be exactly 6 digits'
+  );
+
+
+  export const registerSchema = z.object({
+  name: nameSchema,
+  email: emailSchema,
+  contact: contactSchema,
+  password: passwordSchema
 });
 
 export const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .trim()
-    .email('Please enter a valid email address'),
-
-  password: z
-    .string()
-    .min(1, 'Password is required')
+  email: emailSchema,
+  password: z.string().min(1, 'Password is required')
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .trim()
-    .email('Please enter a valid email address')
+  email: emailSchema
 });
 
 export const verifyOtpSchema = z.object({
-  otp: z
-    .string()
-    .trim()
-    .regex(/^\d{6}$/, 'OTP must be exactly 6 digits')
+  otp: otpSchema
 });
 
 export const resetPasswordSchema = z.object({
-  password: z
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-    ),
+  password: passwordSchema,
 
   confirmPassword: z
     .string()
@@ -72,13 +72,12 @@ export const resetPasswordSchema = z.object({
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),
-  newPassword: z
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain uppercase, lowercase and a number'
-    )
+  newPassword: passwordSchema
+});
+
+export const updateProfileSchema = z.object({
+    name: nameSchema,
+    contact: contactSchema
 });
 
 export const createTaskSchema = z.object({

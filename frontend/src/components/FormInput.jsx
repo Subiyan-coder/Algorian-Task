@@ -20,7 +20,7 @@ const FormInput = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={getInputClass()}
+        className={`form-input ${getInputClass()}`}
       />
       {touched && error && <p className="field-error">{error}</p>}
     </div>

@@ -6,6 +6,7 @@ import FormInput from '../components/FormInput';
 import { useAuth } from '../context/AuthContext';
 import ChangePassword from '../components/ChangePassword';
 import DeleteAccount from "../components/DeleteAccount";
+import { updateProfileSchema, getZodErrors } from "../utils/validationSchemas";
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -18,6 +19,8 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
   const fileInputRef = useRef(null);
 
@@ -41,7 +44,59 @@ const Profile = () => {
     }
   };
 
+const validateField = (field, value) => {
+    const result = updateProfileSchema.safeParse({
+        ...form,
+        [field]: value
+    });
+
+    if (!result.success) {
+        const fieldErrors = getZodErrors(result.error);
+
+        setErrors(prev => ({
+            ...prev,
+            [field]: fieldErrors[field]
+        }));
+    } else {
+        setErrors(prev => ({
+            ...prev,
+            [field]: undefined
+        }));
+    }
+};
+
+const handleChange = (field, value) => {
+    setForm(prev => ({
+        ...prev,
+        [field]: value
+    }));
+
+    setTouched(prev => ({
+        ...prev,
+        [field]: true
+    }));
+
+    validateField(field, value);
+};
+
+
 const handleSave = async () => {
+    
+    const result = updateProfileSchema.safeParse(form);
+
+        if (!result.success) {
+            const fieldErrors = getZodErrors(result.error);
+
+            setErrors(fieldErrors);
+
+            setTouched({
+                name: true,
+                contact: true
+            });
+
+            return;
+        }
+
   setSaving(true);
 
   try {
@@ -128,39 +183,43 @@ const handleImageUpload = async () => {
 
                 {editing ? (
                 <>
-                    <FormInput
-                    label="Name"
-                    value={form.name}
-                    onChange={(e) =>
-                        setForm({ ...form, name: e.target.value })
-                    }
-                    touched={true}
-                    />
+                    <div className="profile-form">
+                        <FormInput
+                            placeholder="Full Name"
+                            value={form.name}
+                            onChange={(e) =>
+                                handleChange("name", e.target.value)
+                            }
+                            error={errors.name}
+                            touched={touched.name}
+                        />
 
-                    <FormInput
-                    label="Contact"
-                    value={form.contact}
-                    onChange={(e) =>
-                        setForm({ ...form, contact: e.target.value })
-                    }
-                    touched={true}
-                    />
+                        <FormInput
+                            placeholder="Contact Number"
+                            value={form.contact}
+                            onChange={(e) =>
+                                handleChange("contact", e.target.value)
+                            }
+                            error={errors.contact}
+                            touched={touched.contact}
+                        />
 
-                    <div className="profile-actions">
-                    <button
-                        className="btn-primary"
-                        disabled={saving}
-                        onClick={handleSave}
-                    >
-                        {saving ? 'Saving...' : 'Save Changes'}
-                    </button>
+                        <div className="profile-actions">
+                            <button
+                                className="btn-primary"
+                                disabled={saving}
+                                onClick={handleSave}
+                            >
+                                {saving ? 'Saving...' : 'Save Changes'}
+                            </button>
 
-                    <button
-                        className="btn-secondary"
-                        onClick={() => setEditing(false)}
-                    >
-                        Cancel
-                    </button>
+                            <button
+                                className="btn-cancel"
+                                onClick={() => setEditing(false)}
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </>
                 ) : (
@@ -270,22 +329,28 @@ const handleImageUpload = async () => {
                     </h3>
 
                       {!showPasswordForm ? (
-                        <button className="btn-secondary">
+                        <button
+                            className="btn-secondary"
+                            onClick={() => setShowPasswordForm(true)}
+                        >
                             <Lock size={18} />
                             <span>Change Password</span>
                         </button>
-                      ) : (
-                          <div className="password-section">
-                              <ChangePassword
-                                  onCancel={() => setShowPasswordForm(false)}
-                              />
-                          </div>
-                      )}
+                    ) : (
+                        <div className="password-section">
+                            <ChangePassword
+                                onCancel={() => setShowPasswordForm(false)}
+                            />
+                        </div>
+                    )}
 
                         <hr className="profile-divider" />
 
                             {!showDeleteAccount ? (
-                                <button className="btn-danger">
+                                <button
+                                    className="btn-danger"
+                                    onClick={() => setShowDeleteAccount(true)}
+                                >
                                     <Trash2 size={18} />
                                     <span>Delete Account</span>
                                 </button>

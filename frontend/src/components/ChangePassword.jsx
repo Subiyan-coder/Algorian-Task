@@ -115,7 +115,7 @@ const ChangePassword = ({onCancel }) => {
 
             <button
                 type="button"
-                className="btn-secondary"
+                className="btn-cancel"
                 onClick={onCancel}
             >
                 Cancel

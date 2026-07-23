@@ -83,9 +83,13 @@ button{
     transition:all .2s ease;
 }
 
-button:hover:not(:disabled) {
-    transform:translateY(-1px);
-    opacity:.95;
+.btn-primary:hover:not(:disabled),
+.btn-secondary:hover:not(:disabled),
+.btn-danger:hover:not(:disabled),
+.btn-success:hover:not(:disabled),
+.btn-cancel:hover:not(:disabled) {
+    transform: translateY(-1px);
+    opacity: .95;
 }
 
 button:disabled {
@@ -238,24 +242,24 @@ button:disabled {
   gap: 14px;
 }
 
-.form-container input,
-.form-container select {
-    padding: 10px 12px;
+.form-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 48px 10px 12px;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
+    font-size: 0.95rem;
     background: #fff;
-    font-size: .95rem;
     transition:
-      border-color .2s,
-      box-shadow .2s;
+        border-color .2s,
+        box-shadow .2s;
 }
 
-.form-container input:focus,
-.form-container select:focus{
-    border-color:#2563eb;
-    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+.form-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.15);
 }
-
 
 .form-container button[type="submit"] {
   background-color: #2563eb;
@@ -652,16 +656,6 @@ select.invalid:focus {
     width: 100%;
 }
 
-.form-input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 48px 10px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    background: #fff;
-}
-
 .password-toggle {
     position: absolute;
     top: 50%;
@@ -761,6 +755,12 @@ select.invalid:focus {
     object-fit:cover;
     border:3px solid #2563eb;
     margin-bottom:20px;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .profile-email{
@@ -874,7 +874,7 @@ select.invalid:focus {
     background:#1d4ed8;
 }
 
-/* -------OTP------------------ */
+/* ─── OTP ───────────────────────────────── */
 
 .otp-container {
     display: flex;
@@ -904,4 +904,44 @@ select.invalid:focus {
 
 .otp-input.invalid {
     border-color: #dc2626;
+}
+
+/* ─── Delete Account ───────────────────────────────── */
+
+.danger-box {
+    border: 1px solid #ef4444;
+    background: #fef2f2;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 18px;
+}
+
+.danger-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    color: #dc2626;
+    margin-bottom: 10px;
+}
+
+.danger-header h4 {
+    margin: 0;
+}
+
+.danger-box p {
+    text-align: center;
+    color: #7f1d1d;
+    margin-bottom: 12px;
+}
+
+.danger-list {
+    margin: 0;
+    padding-left: 20px;
+    color: #991b1b;
+}
+
+.danger-list li {
+    margin-bottom: 6px;
 }

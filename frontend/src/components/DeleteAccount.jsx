@@ -1,16 +1,40 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { TriangleAlert } from "lucide-react"
 import api from "../api/axios";
-import FormInput from "./FormInput";
+import PasswordInput from "./PasswordInput";
 import { useAuth } from "../context/AuthContext";
+import { loginSchema, getZodErrors } from '../utils/validationSchemas';
+
 
 const DeleteAccount = ({ onCancel }) => {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [touched, setTouched] = useState({ password: false });
+    const [errors, setErrors] = useState({});
 
     const navigate = useNavigate();
     const { clearAuth } = useAuth();
+
+    const validateField = (field, value) => {
+    const result = loginSchema.safeParse({
+      password: field === 'password' ? value : password
+    });
+
+    if (!result.success) {
+        const fieldErrors = getZodErrors(result.error);
+        setErrors(prev => ({ ...prev, [field]: fieldErrors[field] }));
+        } else {
+        setErrors(prev => ({ ...prev, [field]: undefined }));
+        }
+    };
+
+    const handleChange = (field, value, setter) => {
+    setter(value);
+    setTouched(prev => ({ ...prev, [field]: true }));
+    validateField(field, value);
+  };
 
     const handleDelete = async () => {
         if (!password.trim()) {
@@ -51,27 +75,33 @@ const DeleteAccount = ({ onCancel }) => {
     return (
         <div className="delete-account">
 
-            <h3 className="danger-title">
-                Danger Zone
-            </h3>
+           <div className="danger-box">
 
-            <p className="danger-text">
-                Deleting your account is permanent.
-                This action cannot be undone.
-            </p>
+                <div className="danger-header">
+                    <TriangleAlert size={20} />
+                    <h4>Danger Zone</h4>
+                </div>
 
-            <ul className="danger-list">
-                <li>Your profile will be permanently removed.</li>
-                <li>Your existing tasks will remain for history.</li>
-                <li>Your name will appear as "(Deleted)" on previous tasks.</li>
-            </ul>
+                <p>
+                    Deleting your account is permanent.
+                    This action cannot be undone.
+                </p>
 
-            <FormInput
-                label="Confirm Password"
-                type="password"
+                <ul className="danger-list">
+                    <li>Your profile will be permanently removed.</li>
+                    <li>Your existing tasks will remain for history.</li>
+                    <li>Your name will appear as "(Deleted)" on previous tasks.</li>
+                </ul>
+
+            </div>
+
+            <PasswordInput 
+
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                touched={true}
+                onChange={(e) => handleChange('password', e.target.value, setPassword)}
+                error={errors.password}
+                touched={touched.password}
+                showRequirements={false}
             />
 
             <div className="profile-actions">
@@ -87,7 +117,7 @@ const DeleteAccount = ({ onCancel }) => {
                 </button>
 
                 <button
-                    className="btn-secondary"
+                    className="btn-cancel"
                     disabled={loading}
                     onClick={onCancel}
                 >
