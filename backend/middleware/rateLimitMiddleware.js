@@ -1,7 +1,7 @@
 const { rateLimit } = require('express-rate-limit');
 const { StatusCodes } = require('http-status-codes');
 
-const createLimiter = (windowMs, max, message) =>
+const createLimiter = (windowMs, max, message, options = {}) =>
   rateLimit({
     windowMs,
     max,
@@ -11,13 +11,17 @@ const createLimiter = (windowMs, max, message) =>
       success: false,
       status: StatusCodes.TOO_MANY_REQUESTS,
       message
-    }
+    },
+    ...options
   });
 
 const loginLimiter = createLimiter(
   15 * 60 * 1000,
   5,
-  'Too many login attempts. Please try again after 15 minutes.'
+  'Too many login attempts. Please try again after 15 minutes.',
+  {
+    skipSuccessfulRequests: true
+  }
 );
 
 const registerLimiter = createLimiter(

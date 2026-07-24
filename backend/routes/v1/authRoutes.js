@@ -14,7 +14,7 @@ router.post('/refresh', refreshToken);
 router.post('/logout', logout);
 router.put('/change-password', protect, changePassword);
 router.post('/forgot-password', passwordResetLimiter, forgotPassword);
-router.post('/verify-otp', passwordResetLimiter, verifyOtp);
-router.put('/reset-password', passwordResetLimiter, resetPassword);
+router.post('/verify-otp', verifyOtp);
+router.put('/reset-password', resetPassword);
 
 module.exports = router;
